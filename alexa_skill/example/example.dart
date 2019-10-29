@@ -1,6 +1,6 @@
 /// This is an example skill that responds to  a LaunchRequest
 /// with `Hello, world!`.
-/// 
+///
 /// You'll need to set up the skill in the Alexa Developer Console,
 /// and somehow get a server running (for example, via `ngrok.io`),
 /// but once that's done, it should just work.
@@ -36,8 +36,17 @@ main() async {
               text: 'Hello, world!',
             ),
           );
-        } else {
-          throw 'Only launch requests are supported in this example; got ${requestBody.requestType}';
+        } else if (requestBody.requestType !=
+            AlexaRequestType.sessionEndedRequest) {
+          // In case of supported actions, send a message.
+          print(JsonEncoder.withIndent('  ').convert(requestBody.request));
+          responseBody.response = AlexaResponse(
+            outputSpeech: AlexaOutputSpeech(
+              type: AlexaOutputSpeechType.plainText,
+              text: 'Only launch requests are supported in this example, '
+                  'but Alexa sent a ${requestBody.requestType}',
+            ),
+          );
         }
 
         // Send the response, and also pretty print it to the terminal.
