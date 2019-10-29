@@ -7,5 +7,6 @@ Web services.
 ## Included Libraries
 * `alexa_skill` - The core functionality for parsing and verifying
 Alexa requests, and returning compliant responses.
-* `angel_alexa` - Helpers for the [Angel](https://angel-dart.dev) for
-writing Alexa skills, including request body parsing and other functionality.
+* `angel_alexa` - Helpers for the [Angel](https://angel-dart.dev)
+framework for writing Alexa skills, including request body parsing
+and other functionality.
