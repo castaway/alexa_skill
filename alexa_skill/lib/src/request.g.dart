@@ -1,15 +1,18 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'models.dart';
+part of 'request.dart';
 
 // **************************************************************************
 // JsonModelGenerator
 // **************************************************************************
 
 @generatedSerializable
-class AlexaRequest extends _AlexaRequest {
-  AlexaRequest(
-      {this.version, this.session, this.context, Map<String, dynamic> request})
+class AlexaRequestBody extends _AlexaRequestBody {
+  AlexaRequestBody(
+      {this.version = '1.0',
+      this.session,
+      this.context,
+      Map<String, dynamic> request})
       : this.request = Map.unmodifiable(request ?? {});
 
   @override
@@ -24,12 +27,12 @@ class AlexaRequest extends _AlexaRequest {
   @override
   Map<String, dynamic> request;
 
-  AlexaRequest copyWith(
+  AlexaRequestBody copyWith(
       {String version,
       _AlexaSession session,
       _AlexaContext context,
       Map<String, dynamic> request}) {
-    return AlexaRequest(
+    return AlexaRequestBody(
         version: version ?? this.version,
         session: session ?? this.session,
         context: context ?? this.context,
@@ -37,7 +40,7 @@ class AlexaRequest extends _AlexaRequest {
   }
 
   bool operator ==(other) {
-    return other is _AlexaRequest &&
+    return other is _AlexaRequestBody &&
         other.version == version &&
         other.session == session &&
         other.context == context &&
@@ -53,11 +56,11 @@ class AlexaRequest extends _AlexaRequest {
 
   @override
   String toString() {
-    return "AlexaRequest(version=$version, session=$session, context=$context, request=$request)";
+    return "AlexaRequestBody(version=$version, session=$session, context=$context, request=$request)";
   }
 
   Map<String, dynamic> toJson() {
-    return AlexaRequestSerializer.toMap(this);
+    return AlexaRequestBodySerializer.toMap(this);
   }
 }
 
@@ -407,32 +410,34 @@ class AlexaAudioPlayer extends _AlexaAudioPlayer {
 // SerializerGenerator
 // **************************************************************************
 
-const AlexaRequestSerializer alexaRequestSerializer = AlexaRequestSerializer();
+const AlexaRequestBodySerializer alexaRequestBodySerializer =
+    AlexaRequestBodySerializer();
 
-class AlexaRequestEncoder extends Converter<AlexaRequest, Map> {
-  const AlexaRequestEncoder();
+class AlexaRequestBodyEncoder extends Converter<AlexaRequestBody, Map> {
+  const AlexaRequestBodyEncoder();
 
   @override
-  Map convert(AlexaRequest model) => AlexaRequestSerializer.toMap(model);
+  Map convert(AlexaRequestBody model) =>
+      AlexaRequestBodySerializer.toMap(model);
 }
 
-class AlexaRequestDecoder extends Converter<Map, AlexaRequest> {
-  const AlexaRequestDecoder();
+class AlexaRequestBodyDecoder extends Converter<Map, AlexaRequestBody> {
+  const AlexaRequestBodyDecoder();
 
   @override
-  AlexaRequest convert(Map map) => AlexaRequestSerializer.fromMap(map);
+  AlexaRequestBody convert(Map map) => AlexaRequestBodySerializer.fromMap(map);
 }
 
-class AlexaRequestSerializer extends Codec<AlexaRequest, Map> {
-  const AlexaRequestSerializer();
+class AlexaRequestBodySerializer extends Codec<AlexaRequestBody, Map> {
+  const AlexaRequestBodySerializer();
 
   @override
-  get encoder => const AlexaRequestEncoder();
+  get encoder => const AlexaRequestBodyEncoder();
   @override
-  get decoder => const AlexaRequestDecoder();
-  static AlexaRequest fromMap(Map map) {
-    return AlexaRequest(
-        version: map['version'] as String,
+  get decoder => const AlexaRequestBodyDecoder();
+  static AlexaRequestBody fromMap(Map map) {
+    return AlexaRequestBody(
+        version: map['version'] as String ?? '1.0',
         session: map['session'] != null
             ? AlexaSessionSerializer.fromMap(map['session'] as Map)
             : null,
@@ -444,7 +449,7 @@ class AlexaRequestSerializer extends Codec<AlexaRequest, Map> {
             : null);
   }
 
-  static Map<String, dynamic> toMap(_AlexaRequest model) {
+  static Map<String, dynamic> toMap(_AlexaRequestBody model) {
     if (model == null) {
       return null;
     }
@@ -457,7 +462,7 @@ class AlexaRequestSerializer extends Codec<AlexaRequest, Map> {
   }
 }
 
-abstract class AlexaRequestFields {
+abstract class AlexaRequestBodyFields {
   static const List<String> allFields = <String>[
     version,
     session,

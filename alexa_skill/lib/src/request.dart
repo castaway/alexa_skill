@@ -1,10 +1,11 @@
 import 'package:angel_serialize/angel_serialize.dart';
-part 'models.g.dart';
+part 'request.g.dart';
 
 const Serializable alexaSerializable = Serializable(autoSnakeCaseNames: false);
 
 @alexaSerializable
-class _AlexaRequest {
+class _AlexaRequestBody {
+  @DefaultsTo('1.0')
   String version;
   _AlexaSession session;
   _AlexaContext context;

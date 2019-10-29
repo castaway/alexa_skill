@@ -1,4 +1,4 @@
-import 'models.dart';
+import 'request.dart';
 
 /// The possible values of [AlexaAudioPlayer.playerActivity].
 abstract class AlexaPlayerActivity {
@@ -19,4 +19,9 @@ abstract class AlexaPlayerActivity {
 
   /// `STOPPED`: Stream was interrupted.
   static const String stopped = 'STOPPED';
+}
+
+abstract class AlexaPlayBehavior {
+  /// `ENQUEUE`: Add this speech to the end of the queue. Do not interrupt Alexa's current speech.
+  static const String enqueue = 'ENQUEUE';
 }
