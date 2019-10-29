@@ -1,28 +1,51 @@
-// ignore_for_file: deprecated_member_use
+/// This is an example skill that responds to  a LaunchRequest
+/// with `Hello, world!`.
+/// 
+/// You'll need to set up the skill in the Alexa Developer Console,
+/// and somehow get a server running (for example, via `ngrok.io`),
+/// but once that's done, it should just work.
+library alexa_skill.example;
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:alexa_skill/alexa_skill.dart';
-import 'package:body_parser/body_parser.dart';
 
 main() async {
   var server = await HttpServer.bind('127.0.0.1', 3000);
   print('Listening at http://127.0.0.1:3000');
   await for (var request in server) {
     try {
-      if (request.method != 'POST' || request.uri.path != '/alexa') {
+      if (request.method != 'POST' || request.uri.path != '/') {
         request.response.statusCode = 404;
       } else {
-        // TODO: Verify signature
-        var bodyParseResult = await parseBody(request);
-        var body = alexaRequestBodySerializer.decode(bodyParseResult.body);
-        if (body.requestType != AlexaRequestType.launchRequest) {
-          throw 'Only launch requests are supported in this example; got ${body.requestType}';
+        // Parse the request body.
+        var bodyResult = await request
+            .cast<List<int>>()
+            .transform(utf8.decoder)
+            .join()
+            .then(json.decode) as Map;
+        var requestBody = alexaRequestBodySerializer.decode(bodyResult);
+        var responseBody = AlexaResponseBody();
+        print('Request type: ${requestBody.requestType}');
+
+        if (requestBody.requestType == AlexaRequestType.launchRequest) {
+          // Send a basic text response.
+          responseBody.response = AlexaResponse(
+            outputSpeech: AlexaOutputSpeech(
+              type: AlexaOutputSpeechType.plainText,
+              text: 'Hello, world!',
+            ),
+          );
         } else {
-          var alexaResponse = AlexaResponseBody()
-            ..response.outputSpeech = AlexaOutputSpeech(text: 'Hello!');
+          throw 'Only launch requests are supported in this example; got ${requestBody.requestType}';
+        }
+
+        // Send the response, and also pretty print it to the terminal.
+        if (responseBody != null) {
+          print(JsonEncoder.withIndent('  ').convert(responseBody));
           request.response
             ..headers.contentType = ContentType.json
-            ..write(json.encode(alexaResponse));
+            ..write(json.encode(responseBody));
         }
       }
     } catch (e, st) {
