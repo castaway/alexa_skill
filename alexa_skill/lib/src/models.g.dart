@@ -15,15 +15,38 @@ class AlexaRequestBody extends _AlexaRequestBody {
       Map<String, dynamic> request})
       : this.request = Map.unmodifiable(request ?? {});
 
+  /// The version specifier for the request.
   @override
   String version;
 
+  /// The session object provides additional context associated with the request.
+  /// Note: The session is included for all standard requests, but it is not included
+  /// for `AudioPlayer`, `VideoApp`, or `PlaybackController` requests.
   @override
   _AlexaSession session;
 
+  /// The context object provides your skill with information about the current state
+  /// of the Alexa service and device at the time the request is sent to your service.
+  ///
+  /// This is included on all requests. For requests sent in the context of a session
+  /// (`LaunchRequest` and `IntentRequest`), the context object duplicates the user and
+  /// application information that is also available in the session.
   @override
   _AlexaContext context;
 
+  /// A request object that provides the details of the user's request.
+  ///
+  /// There are several different request types available, see:
+  ///
+  /// Standard Requests:
+  /// * [AlexaCanFulfillIntentRequest]
+  /// * [AlexaLaunchRequest]
+  /// * [AlexaIntentRequest]
+  /// * [AlexaSessionEndedRequest]
+  ///
+  /// In most cases, using [requestObject] or the coerion getters
+  /// ([launchRequest], [canFulfillIntentRequest], [intentRequest],
+  /// [sessionEndedRequest]) is signficantly more convenient.
   @override
   Map<String, dynamic> request;
 

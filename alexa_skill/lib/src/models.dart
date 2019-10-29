@@ -2,15 +2,43 @@ import 'package:angel_serialize/angel_serialize.dart';
 import 'constants.dart';
 part 'models.g.dart';
 
-const Serializable alexaSerializable = Serializable(autoSnakeCaseNames: false);
+const Serializable _alexaSerializable = Serializable(autoSnakeCaseNames: false);
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaRequestBody {
+  /// The version specifier for the request.
   @DefaultsTo('1.0')
   String version;
+
+  /// The session object provides additional context associated with the request.
+  /// Note: The session is included for all standard requests, but it is not included
+  /// for `AudioPlayer`, `VideoApp`, or `PlaybackController` requests.
   _AlexaSession session;
+
+  /// The context object provides your skill with information about the current state
+  /// of the Alexa service and device at the time the request is sent to your service.
+  ///
+  /// This is included on all requests. For requests sent in the context of a session
+  /// (`LaunchRequest` and `IntentRequest`), the context object duplicates the user and
+  /// application information that is also available in the session.
   _AlexaContext context;
+
+  /// A request object that provides the details of the user's request.
+  ///
+  /// There are several different request types available, see:
+  ///
+  /// Standard Requests:
+  /// * [AlexaCanFulfillIntentRequest]
+  /// * [AlexaLaunchRequest]
+  /// * [AlexaIntentRequest]
+  /// * [AlexaSessionEndedRequest]
+  ///
+  /// In most cases, using [requestObject] or the coerion getters
+  /// ([launchRequest], [canFulfillIntentRequest], [intentRequest],
+  /// [sessionEndedRequest]) is signficantly more convenient.
   Map<String, dynamic> request;
+
+  /// Returns the `type` field from the [request], if any.
   String get requestType =>
       request == null ? null : request['type']?.toString();
 
@@ -83,19 +111,19 @@ class _AlexaRequestBody {
 
 /// A [LaunchRequest] is an object that represents that a user made a request to an Alexa skill,
 /// but did not provide a specific intent.
-@alexaSerializable
+@_alexaSerializable
 class _AlexaLaunchRequest extends AlexaRequest {
   // ignore: unused_field
   String _i;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaCanFulfillIntentRequest extends AlexaRequest {
   /// An object that represents what the user wants.
   _AlexaIntent intent;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaSlot {
   /// A string that represents the name of the slot.
   String name;
@@ -119,7 +147,7 @@ class _AlexaSlot {
   _AlexaResolutions resolutions;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaResolutions {
   /// An array of objects representing each possible authority for entity
   /// resolution.
@@ -129,7 +157,7 @@ class _AlexaResolutions {
   List<_AlexaResolutionAuthority> resolutionsPerAuthority;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaResolutionAuthority {
   /// The name of the authority for the slot values. For custom slot types,
   /// this authority label incorporates your skill ID and the slot type name.
@@ -144,14 +172,14 @@ class _AlexaResolutionAuthority {
   List<_AlexaResolutionAuthorityValue> values;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaResolutionAuthorityStatus {
   /// A code indicating the results of attempting to resolve the user utterance
   /// against the defined slot types.
   String code;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaResolutionAuthorityValue {
   /// An object representing the resolved value for the slot, based on the user's
   /// utterance and the slot type definition.
@@ -165,7 +193,7 @@ class _AlexaResolutionAuthorityValue {
   String id;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaIntentRequest extends AlexaRequest {
   /// Enumeration indicating the status of the multi-turn dialog.
   ///
@@ -176,7 +204,7 @@ class _AlexaIntentRequest extends AlexaRequest {
   _AlexaIntent intent;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaIntent {
   /// A string representing the name of the intent.
   String name;
@@ -190,7 +218,7 @@ class _AlexaIntent {
   Map<String, _AlexaSlot> slots;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaSessionEndedRequest extends AlexaRequest {
   /// Describes why the session ended.
   String reason;
@@ -200,7 +228,7 @@ class _AlexaSessionEndedRequest extends AlexaRequest {
   _AlexaError error;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaError {
   /// A [String] indicating the type of error that occurred.
   String type;
@@ -209,7 +237,7 @@ class _AlexaError {
   String message;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaSession {
   @HasAlias('new')
   bool isNew;
@@ -219,24 +247,24 @@ class _AlexaSession {
   _AlexaUser user;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaSessionApplication {
   String applicationId;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaUser {
   String userId;
   String accessToken;
   _AlexaPermissions permissions;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaPermissions {
   String consentToken;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaContext {
   @HasAlias('System')
   _AlexaSystem system;
@@ -244,7 +272,7 @@ class _AlexaContext {
   _AlexaAudioPlayer audioPlayer;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaSystem {
   String apiAccessToken;
   String apiEndpoint;
@@ -254,13 +282,13 @@ class _AlexaSystem {
       apiEndpoint == null ? null : Uri.tryParse(apiEndpoint);
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaDevice {
   String deviceId;
   List<String> supportedInterfaces;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaAudioPlayer {
   String token;
   int offsetInMilliseconds;
@@ -293,7 +321,7 @@ abstract class AlexaRequest {
 
 // Responses...
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaResponseBody {
   @DefaultsTo('1.0')
   String version;
@@ -301,7 +329,7 @@ class _AlexaResponseBody {
   _AlexaResponse response;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaResponse {
   _AlexaOutputSpeech outputSpeech;
   _AlexaCard card;
@@ -310,7 +338,7 @@ class _AlexaResponse {
   bool shouldEndSession;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaOutputSpeech {
   String type;
   String title;
@@ -319,7 +347,7 @@ class _AlexaOutputSpeech {
   String playBehavior;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaCard {
   String type;
   String title;
@@ -328,18 +356,18 @@ class _AlexaCard {
   _AlexaCardImage image;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaCardImage {
   String smallImageUrl;
   String largeImageUrl;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaReprompt {
   _AlexaOutputSpeech outputSpeech;
 }
 
-@alexaSerializable
+@_alexaSerializable
 class _AlexaCanFulfillIntentResponse extends AlexaRequest {
   /// Represents an overall response to whether the skill
   /// can understand and fulfill the intent with detected slots.
