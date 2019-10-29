@@ -65,6 +65,162 @@ class AlexaRequestBody extends _AlexaRequestBody {
 }
 
 @generatedSerializable
+class LaunchRequest extends _LaunchRequest {
+  LaunchRequest({this.type, this.locale, this.requestId, this.timestamp});
+
+  @override
+  String type;
+
+  @override
+  String locale;
+
+  @override
+  String requestId;
+
+  @override
+  String timestamp;
+
+  LaunchRequest copyWith(
+      {String type, String locale, String requestId, String timestamp}) {
+    return LaunchRequest(
+        type: type ?? this.type,
+        locale: locale ?? this.locale,
+        requestId: requestId ?? this.requestId,
+        timestamp: timestamp ?? this.timestamp);
+  }
+
+  bool operator ==(other) {
+    return other is _LaunchRequest &&
+        other.type == type &&
+        other.locale == locale &&
+        other.requestId == requestId &&
+        other.timestamp == timestamp;
+  }
+
+  @override
+  int get hashCode {
+    return hashObjects([type, locale, requestId, timestamp]);
+  }
+
+  @override
+  String toString() {
+    return "LaunchRequest(type=$type, locale=$locale, requestId=$requestId, timestamp=$timestamp)";
+  }
+
+  Map<String, dynamic> toJson() {
+    return LaunchRequestSerializer.toMap(this);
+  }
+}
+
+@generatedSerializable
+class CanFulfillIntentRequest implements _CanFulfillIntentRequest {
+  CanFulfillIntentRequest({this.type, this.locale});
+
+  @override
+  String type;
+
+  @override
+  String locale;
+
+  CanFulfillIntentRequest copyWith({String type, String locale}) {
+    return CanFulfillIntentRequest(
+        type: type ?? this.type, locale: locale ?? this.locale);
+  }
+
+  bool operator ==(other) {
+    return other is _CanFulfillIntentRequest &&
+        other.type == type &&
+        other.locale == locale;
+  }
+
+  @override
+  int get hashCode {
+    return hashObjects([type, locale]);
+  }
+
+  @override
+  String toString() {
+    return "CanFulfillIntentRequest(type=$type, locale=$locale)";
+  }
+
+  Map<String, dynamic> toJson() {
+    return CanFulfillIntentRequestSerializer.toMap(this);
+  }
+}
+
+@generatedSerializable
+class IntentRequest implements _IntentRequest {
+  IntentRequest({this.type, this.locale});
+
+  @override
+  String type;
+
+  @override
+  String locale;
+
+  IntentRequest copyWith({String type, String locale}) {
+    return IntentRequest(
+        type: type ?? this.type, locale: locale ?? this.locale);
+  }
+
+  bool operator ==(other) {
+    return other is _IntentRequest &&
+        other.type == type &&
+        other.locale == locale;
+  }
+
+  @override
+  int get hashCode {
+    return hashObjects([type, locale]);
+  }
+
+  @override
+  String toString() {
+    return "IntentRequest(type=$type, locale=$locale)";
+  }
+
+  Map<String, dynamic> toJson() {
+    return IntentRequestSerializer.toMap(this);
+  }
+}
+
+@generatedSerializable
+class SessionEndedRequest implements _SessionEndedRequest {
+  SessionEndedRequest({this.type, this.locale});
+
+  @override
+  String type;
+
+  @override
+  String locale;
+
+  SessionEndedRequest copyWith({String type, String locale}) {
+    return SessionEndedRequest(
+        type: type ?? this.type, locale: locale ?? this.locale);
+  }
+
+  bool operator ==(other) {
+    return other is _SessionEndedRequest &&
+        other.type == type &&
+        other.locale == locale;
+  }
+
+  @override
+  int get hashCode {
+    return hashObjects([type, locale]);
+  }
+
+  @override
+  String toString() {
+    return "SessionEndedRequest(type=$type, locale=$locale)";
+  }
+
+  Map<String, dynamic> toJson() {
+    return SessionEndedRequestSerializer.toMap(this);
+  }
+}
+
+@generatedSerializable
 class AlexaSession extends _AlexaSession {
   AlexaSession(
       {this.isNew,
@@ -477,6 +633,210 @@ abstract class AlexaRequestBodyFields {
   static const String context = 'context';
 
   static const String request = 'request';
+}
+
+const LaunchRequestSerializer launchRequestSerializer =
+    LaunchRequestSerializer();
+
+class LaunchRequestEncoder extends Converter<LaunchRequest, Map> {
+  const LaunchRequestEncoder();
+
+  @override
+  Map convert(LaunchRequest model) => LaunchRequestSerializer.toMap(model);
+}
+
+class LaunchRequestDecoder extends Converter<Map, LaunchRequest> {
+  const LaunchRequestDecoder();
+
+  @override
+  LaunchRequest convert(Map map) => LaunchRequestSerializer.fromMap(map);
+}
+
+class LaunchRequestSerializer extends Codec<LaunchRequest, Map> {
+  const LaunchRequestSerializer();
+
+  @override
+  get encoder => const LaunchRequestEncoder();
+  @override
+  get decoder => const LaunchRequestDecoder();
+  static LaunchRequest fromMap(Map map) {
+    return LaunchRequest(
+        type: map['type'] as String,
+        locale: map['locale'] as String,
+        requestId: map['requestId'] as String,
+        timestamp: map['timestamp'] as String);
+  }
+
+  static Map<String, dynamic> toMap(_LaunchRequest model) {
+    if (model == null) {
+      return null;
+    }
+    return {
+      'type': model.type,
+      'locale': model.locale,
+      'requestId': model.requestId,
+      'timestamp': model.timestamp
+    };
+  }
+}
+
+abstract class LaunchRequestFields {
+  static const List<String> allFields = <String>[
+    type,
+    locale,
+    requestId,
+    timestamp
+  ];
+
+  static const String type = 'type';
+
+  static const String locale = 'locale';
+
+  static const String requestId = 'requestId';
+
+  static const String timestamp = 'timestamp';
+}
+
+const CanFulfillIntentRequestSerializer canFulfillIntentRequestSerializer =
+    CanFulfillIntentRequestSerializer();
+
+class CanFulfillIntentRequestEncoder
+    extends Converter<CanFulfillIntentRequest, Map> {
+  const CanFulfillIntentRequestEncoder();
+
+  @override
+  Map convert(CanFulfillIntentRequest model) =>
+      CanFulfillIntentRequestSerializer.toMap(model);
+}
+
+class CanFulfillIntentRequestDecoder
+    extends Converter<Map, CanFulfillIntentRequest> {
+  const CanFulfillIntentRequestDecoder();
+
+  @override
+  CanFulfillIntentRequest convert(Map map) =>
+      CanFulfillIntentRequestSerializer.fromMap(map);
+}
+
+class CanFulfillIntentRequestSerializer
+    extends Codec<CanFulfillIntentRequest, Map> {
+  const CanFulfillIntentRequestSerializer();
+
+  @override
+  get encoder => const CanFulfillIntentRequestEncoder();
+  @override
+  get decoder => const CanFulfillIntentRequestDecoder();
+  static CanFulfillIntentRequest fromMap(Map map) {
+    return CanFulfillIntentRequest(
+        type: map['type'] as String, locale: map['locale'] as String);
+  }
+
+  static Map<String, dynamic> toMap(_CanFulfillIntentRequest model) {
+    if (model == null) {
+      return null;
+    }
+    return {'type': model.type, 'locale': model.locale};
+  }
+}
+
+abstract class CanFulfillIntentRequestFields {
+  static const List<String> allFields = <String>[type, locale];
+
+  static const String type = 'type';
+
+  static const String locale = 'locale';
+}
+
+const IntentRequestSerializer intentRequestSerializer =
+    IntentRequestSerializer();
+
+class IntentRequestEncoder extends Converter<IntentRequest, Map> {
+  const IntentRequestEncoder();
+
+  @override
+  Map convert(IntentRequest model) => IntentRequestSerializer.toMap(model);
+}
+
+class IntentRequestDecoder extends Converter<Map, IntentRequest> {
+  const IntentRequestDecoder();
+
+  @override
+  IntentRequest convert(Map map) => IntentRequestSerializer.fromMap(map);
+}
+
+class IntentRequestSerializer extends Codec<IntentRequest, Map> {
+  const IntentRequestSerializer();
+
+  @override
+  get encoder => const IntentRequestEncoder();
+  @override
+  get decoder => const IntentRequestDecoder();
+  static IntentRequest fromMap(Map map) {
+    return IntentRequest(
+        type: map['type'] as String, locale: map['locale'] as String);
+  }
+
+  static Map<String, dynamic> toMap(_IntentRequest model) {
+    if (model == null) {
+      return null;
+    }
+    return {'type': model.type, 'locale': model.locale};
+  }
+}
+
+abstract class IntentRequestFields {
+  static const List<String> allFields = <String>[type, locale];
+
+  static const String type = 'type';
+
+  static const String locale = 'locale';
+}
+
+const SessionEndedRequestSerializer sessionEndedRequestSerializer =
+    SessionEndedRequestSerializer();
+
+class SessionEndedRequestEncoder extends Converter<SessionEndedRequest, Map> {
+  const SessionEndedRequestEncoder();
+
+  @override
+  Map convert(SessionEndedRequest model) =>
+      SessionEndedRequestSerializer.toMap(model);
+}
+
+class SessionEndedRequestDecoder extends Converter<Map, SessionEndedRequest> {
+  const SessionEndedRequestDecoder();
+
+  @override
+  SessionEndedRequest convert(Map map) =>
+      SessionEndedRequestSerializer.fromMap(map);
+}
+
+class SessionEndedRequestSerializer extends Codec<SessionEndedRequest, Map> {
+  const SessionEndedRequestSerializer();
+
+  @override
+  get encoder => const SessionEndedRequestEncoder();
+  @override
+  get decoder => const SessionEndedRequestDecoder();
+  static SessionEndedRequest fromMap(Map map) {
+    return SessionEndedRequest(
+        type: map['type'] as String, locale: map['locale'] as String);
+  }
+
+  static Map<String, dynamic> toMap(_SessionEndedRequest model) {
+    if (model == null) {
+      return null;
+    }
+    return {'type': model.type, 'locale': model.locale};
+  }
+}
+
+abstract class SessionEndedRequestFields {
+  static const List<String> allFields = <String>[type, locale];
+
+  static const String type = 'type';
+
+  static const String locale = 'locale';
 }
 
 const AlexaSessionSerializer alexaSessionSerializer = AlexaSessionSerializer();

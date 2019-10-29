@@ -10,7 +10,39 @@ class _AlexaRequestBody {
   _AlexaSession session;
   _AlexaContext context;
   Map<String, dynamic> request;
+  String get requestType =>
+      request == null ? null : request['type']?.toString();
+
+  LaunchRequest get launchRequest =>
+      request == null ? null : launchRequestSerializer.decode(request);
+
+  CanFulfillIntentRequest get canFulfillIntentRequest => request == null
+      ? null
+      : canFulfillIntentRequestSerializer.decode(request);
+
+  IntentRequest get intentRequest =>
+      request == null ? null : intentRequestSerializer.decode(request);
+
+  SessionEndedRequest get sessionEndedRequest =>
+      request == null ? null : sessionEndedRequestSerializer.decode(request);
 }
+
+@alexaSerializable
+class _LaunchRequest extends _AlexaRequest {
+  String requestId;
+  String timestamp;
+  DateTime get timestampAsDateTime =>
+      timestamp == null ? null : DateTime.tryParse(timestamp);
+}
+
+@alexaSerializable
+class _CanFulfillIntentRequest extends _AlexaRequest {}
+
+@alexaSerializable
+class _IntentRequest extends _AlexaRequest {}
+
+@alexaSerializable
+class _SessionEndedRequest extends _AlexaRequest {}
 
 @alexaSerializable
 class _AlexaSession {
@@ -53,7 +85,8 @@ class _AlexaSystem {
   String apiEndpoint;
   _AlexaSessionApplication application;
   _AlexaUser user;
-  Uri get apiEndpointUri => Uri.tryParse(apiEndpoint);
+  Uri get apiEndpointUri =>
+      apiEndpoint == null ? null : Uri.tryParse(apiEndpoint);
 }
 
 @alexaSerializable
@@ -70,6 +103,7 @@ class _AlexaAudioPlayer {
   Duration get offset => Duration(milliseconds: offsetInMilliseconds);
 }
 
-abstract class _AlexaRequestObject {
+abstract class _AlexaRequest {
+  String type;
   String locale;
 }
