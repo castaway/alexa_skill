@@ -1,5 +1,3 @@
-import 'request.dart';
-
 /// The possible values of [AlexaAudioPlayer.playerActivity].
 abstract class AlexaPlayerActivity {
   /// `IDLE`: Nothing was playing, no enqueued items.

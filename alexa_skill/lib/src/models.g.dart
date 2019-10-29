@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'request.dart';
+part of 'models.dart';
 
 // **************************************************************************
 // JsonModelGenerator
@@ -66,7 +66,11 @@ class AlexaRequestBody extends _AlexaRequestBody {
 
 @generatedSerializable
 class AlexaLaunchRequest extends _AlexaLaunchRequest {
-  AlexaLaunchRequest({this.type, this.locale, this.requestId, this.timestamp});
+  AlexaLaunchRequest({this.requestId, this.type, this.locale, this.timestamp});
+
+  /// Represents a unique identifier for the specific request.
+  @override
+  String requestId;
 
   /// Describes the request type. See [AlexaRequestType].
   @override
@@ -76,40 +80,36 @@ class AlexaLaunchRequest extends _AlexaLaunchRequest {
   @override
   String locale;
 
-  /// Represents a unique identifier for the specific request.
-  @override
-  String requestId;
-
   /// Provides the date and time when Alexa sent the request as an ISO 8601 formatted string.
   /// Used to verify the request when hosting your skill as a web service.
   @override
   String timestamp;
 
   AlexaLaunchRequest copyWith(
-      {String type, String locale, String requestId, String timestamp}) {
+      {String requestId, String type, String locale, String timestamp}) {
     return AlexaLaunchRequest(
+        requestId: requestId ?? this.requestId,
         type: type ?? this.type,
         locale: locale ?? this.locale,
-        requestId: requestId ?? this.requestId,
         timestamp: timestamp ?? this.timestamp);
   }
 
   bool operator ==(other) {
     return other is _AlexaLaunchRequest &&
+        other.requestId == requestId &&
         other.type == type &&
         other.locale == locale &&
-        other.requestId == requestId &&
         other.timestamp == timestamp;
   }
 
   @override
   int get hashCode {
-    return hashObjects([type, locale, requestId, timestamp]);
+    return hashObjects([requestId, type, locale, timestamp]);
   }
 
   @override
   String toString() {
-    return "AlexaLaunchRequest(type=$type, locale=$locale, requestId=$requestId, timestamp=$timestamp)";
+    return "AlexaLaunchRequest(requestId=$requestId, type=$type, locale=$locale, timestamp=$timestamp)";
   }
 
   Map<String, dynamic> toJson() {
@@ -120,8 +120,11 @@ class AlexaLaunchRequest extends _AlexaLaunchRequest {
 @generatedSerializable
 class AlexaCanFulfillIntentRequest extends _AlexaCanFulfillIntentRequest {
   AlexaCanFulfillIntentRequest(
-      {this.type, this.locale, this.canFulfill, Map<String, _AlexaSlot> slots})
-      : this.slots = Map.unmodifiable(slots ?? {});
+      {this.requestId, this.type, this.locale, this.timestamp, this.intent});
+
+  /// Represents a unique identifier for the specific request.
+  @override
+  String requestId;
 
   /// Describes the request type. See [AlexaRequestType].
   @override
@@ -131,50 +134,46 @@ class AlexaCanFulfillIntentRequest extends _AlexaCanFulfillIntentRequest {
   @override
   String locale;
 
-  /// Represents an overall response to whether the skill
-  /// can understand and fulfill the intent with detected slots.
+  /// Provides the date and time when Alexa sent the request as an ISO 8601 formatted string.
+  /// Used to verify the request when hosting your skill as a web service.
   @override
-  String canFulfill;
+  String timestamp;
 
-  /// A map that represents a detailed response to each detected slot
-  /// within the intent and whether the skill can understand and fulfill
-  /// the slot. The map supplements the overall canFulfill response for
-  /// the intent, and helps Alexa make better ranking and arbitration
-  /// decisions.
+  /// An object that represents what the user wants.
   @override
-  Map<String, _AlexaSlot> slots;
+  _AlexaIntent intent;
 
   AlexaCanFulfillIntentRequest copyWith(
-      {String type,
+      {String requestId,
+      String type,
       String locale,
-      String canFulfill,
-      Map<String, _AlexaSlot> slots}) {
+      String timestamp,
+      _AlexaIntent intent}) {
     return AlexaCanFulfillIntentRequest(
+        requestId: requestId ?? this.requestId,
         type: type ?? this.type,
         locale: locale ?? this.locale,
-        canFulfill: canFulfill ?? this.canFulfill,
-        slots: slots ?? this.slots);
+        timestamp: timestamp ?? this.timestamp,
+        intent: intent ?? this.intent);
   }
 
   bool operator ==(other) {
     return other is _AlexaCanFulfillIntentRequest &&
+        other.requestId == requestId &&
         other.type == type &&
         other.locale == locale &&
-        other.canFulfill == canFulfill &&
-        MapEquality<String, _AlexaSlot>(
-                keys: DefaultEquality<String>(),
-                values: DefaultEquality<_AlexaSlot>())
-            .equals(other.slots, slots);
+        other.timestamp == timestamp &&
+        other.intent == intent;
   }
 
   @override
   int get hashCode {
-    return hashObjects([type, locale, canFulfill, slots]);
+    return hashObjects([requestId, type, locale, timestamp, intent]);
   }
 
   @override
   String toString() {
-    return "AlexaCanFulfillIntentRequest(type=$type, locale=$locale, canFulfill=$canFulfill, slots=$slots)";
+    return "AlexaCanFulfillIntentRequest(requestId=$requestId, type=$type, locale=$locale, timestamp=$timestamp, intent=$intent)";
   }
 
   Map<String, dynamic> toJson() {
@@ -425,8 +424,18 @@ class AlexaResolutionAuthorityValue extends _AlexaResolutionAuthorityValue {
 }
 
 @generatedSerializable
-class AlexaIntentRequest implements _AlexaIntentRequest {
-  AlexaIntentRequest({this.type, this.locale});
+class AlexaIntentRequest extends _AlexaIntentRequest {
+  AlexaIntentRequest(
+      {this.requestId,
+      this.type,
+      this.locale,
+      this.timestamp,
+      this.dialogState,
+      this.intent});
+
+  /// Represents a unique identifier for the specific request.
+  @override
+  String requestId;
 
   /// Describes the request type. See [AlexaRequestType].
   @override
@@ -436,25 +445,56 @@ class AlexaIntentRequest implements _AlexaIntentRequest {
   @override
   String locale;
 
-  AlexaIntentRequest copyWith({String type, String locale}) {
+  /// Provides the date and time when Alexa sent the request as an ISO 8601 formatted string.
+  /// Used to verify the request when hosting your skill as a web service.
+  @override
+  String timestamp;
+
+  /// Enumeration indicating the status of the multi-turn dialog.
+  ///
+  /// This property is included if the skill has a dialog model.
+  @override
+  String dialogState;
+
+  /// An object that represents what the user wants.
+  @override
+  _AlexaIntent intent;
+
+  AlexaIntentRequest copyWith(
+      {String requestId,
+      String type,
+      String locale,
+      String timestamp,
+      String dialogState,
+      _AlexaIntent intent}) {
     return AlexaIntentRequest(
-        type: type ?? this.type, locale: locale ?? this.locale);
+        requestId: requestId ?? this.requestId,
+        type: type ?? this.type,
+        locale: locale ?? this.locale,
+        timestamp: timestamp ?? this.timestamp,
+        dialogState: dialogState ?? this.dialogState,
+        intent: intent ?? this.intent);
   }
 
   bool operator ==(other) {
     return other is _AlexaIntentRequest &&
+        other.requestId == requestId &&
         other.type == type &&
-        other.locale == locale;
+        other.locale == locale &&
+        other.timestamp == timestamp &&
+        other.dialogState == dialogState &&
+        other.intent == intent;
   }
 
   @override
   int get hashCode {
-    return hashObjects([type, locale]);
+    return hashObjects(
+        [requestId, type, locale, timestamp, dialogState, intent]);
   }
 
   @override
   String toString() {
-    return "AlexaIntentRequest(type=$type, locale=$locale)";
+    return "AlexaIntentRequest(requestId=$requestId, type=$type, locale=$locale, timestamp=$timestamp, dialogState=$dialogState, intent=$intent)";
   }
 
   Map<String, dynamic> toJson() {
@@ -463,8 +503,71 @@ class AlexaIntentRequest implements _AlexaIntentRequest {
 }
 
 @generatedSerializable
-class AlexaSessionEndedRequest implements _AlexaSessionEndedRequest {
-  AlexaSessionEndedRequest({this.type, this.locale});
+class AlexaIntent extends _AlexaIntent {
+  AlexaIntent(
+      {this.name, this.confirmationStatus, Map<String, _AlexaSlot> slots})
+      : this.slots = Map.unmodifiable(slots ?? {});
+
+  /// A string representing the name of the intent.
+  @override
+  String name;
+
+  /// An enumeration indicating whether the user has explicitly confirmed
+  /// or denied the entire intent.
+  @override
+  String confirmationStatus;
+
+  /// A map of key-value pairs that further describes what the user meant
+  /// based on a predefined intent schema. The map can be empty.
+  @override
+  Map<String, _AlexaSlot> slots;
+
+  AlexaIntent copyWith(
+      {String name, String confirmationStatus, Map<String, _AlexaSlot> slots}) {
+    return AlexaIntent(
+        name: name ?? this.name,
+        confirmationStatus: confirmationStatus ?? this.confirmationStatus,
+        slots: slots ?? this.slots);
+  }
+
+  bool operator ==(other) {
+    return other is _AlexaIntent &&
+        other.name == name &&
+        other.confirmationStatus == confirmationStatus &&
+        MapEquality<String, _AlexaSlot>(
+                keys: DefaultEquality<String>(),
+                values: DefaultEquality<_AlexaSlot>())
+            .equals(other.slots, slots);
+  }
+
+  @override
+  int get hashCode {
+    return hashObjects([name, confirmationStatus, slots]);
+  }
+
+  @override
+  String toString() {
+    return "AlexaIntent(name=$name, confirmationStatus=$confirmationStatus, slots=$slots)";
+  }
+
+  Map<String, dynamic> toJson() {
+    return AlexaIntentSerializer.toMap(this);
+  }
+}
+
+@generatedSerializable
+class AlexaSessionEndedRequest extends _AlexaSessionEndedRequest {
+  AlexaSessionEndedRequest(
+      {this.requestId,
+      this.type,
+      this.locale,
+      this.timestamp,
+      this.reason,
+      this.error});
+
+  /// Represents a unique identifier for the specific request.
+  @override
+  String requestId;
 
   /// Describes the request type. See [AlexaRequestType].
   @override
@@ -474,29 +577,96 @@ class AlexaSessionEndedRequest implements _AlexaSessionEndedRequest {
   @override
   String locale;
 
-  AlexaSessionEndedRequest copyWith({String type, String locale}) {
+  /// Provides the date and time when Alexa sent the request as an ISO 8601 formatted string.
+  /// Used to verify the request when hosting your skill as a web service.
+  @override
+  String timestamp;
+
+  /// Describes why the session ended.
+  @override
+  String reason;
+
+  /// An error object providing more information about the error
+  /// that occurred.
+  @override
+  _AlexaError error;
+
+  AlexaSessionEndedRequest copyWith(
+      {String requestId,
+      String type,
+      String locale,
+      String timestamp,
+      String reason,
+      _AlexaError error}) {
     return AlexaSessionEndedRequest(
-        type: type ?? this.type, locale: locale ?? this.locale);
+        requestId: requestId ?? this.requestId,
+        type: type ?? this.type,
+        locale: locale ?? this.locale,
+        timestamp: timestamp ?? this.timestamp,
+        reason: reason ?? this.reason,
+        error: error ?? this.error);
   }
 
   bool operator ==(other) {
     return other is _AlexaSessionEndedRequest &&
+        other.requestId == requestId &&
         other.type == type &&
-        other.locale == locale;
+        other.locale == locale &&
+        other.timestamp == timestamp &&
+        other.reason == reason &&
+        other.error == error;
   }
 
   @override
   int get hashCode {
-    return hashObjects([type, locale]);
+    return hashObjects([requestId, type, locale, timestamp, reason, error]);
   }
 
   @override
   String toString() {
-    return "AlexaSessionEndedRequest(type=$type, locale=$locale)";
+    return "AlexaSessionEndedRequest(requestId=$requestId, type=$type, locale=$locale, timestamp=$timestamp, reason=$reason, error=$error)";
   }
 
   Map<String, dynamic> toJson() {
     return AlexaSessionEndedRequestSerializer.toMap(this);
+  }
+}
+
+@generatedSerializable
+class AlexaError extends _AlexaError {
+  AlexaError({this.type, this.message});
+
+  /// A [String] indicating the type of error that occurred.
+  @override
+  String type;
+
+  /// A [String] providing more information about the error.
+  @override
+  String message;
+
+  AlexaError copyWith({String type, String message}) {
+    return AlexaError(
+        type: type ?? this.type, message: message ?? this.message);
+  }
+
+  bool operator ==(other) {
+    return other is _AlexaError &&
+        other.type == type &&
+        other.message == message;
+  }
+
+  @override
+  int get hashCode {
+    return hashObjects([type, message]);
+  }
+
+  @override
+  String toString() {
+    return "AlexaError(type=$type, message=$message)";
+  }
+
+  Map<String, dynamic> toJson() {
+    return AlexaErrorSerializer.toMap(this);
   }
 }
 
@@ -842,6 +1012,390 @@ class AlexaAudioPlayer extends _AlexaAudioPlayer {
   }
 }
 
+@generatedSerializable
+class AlexaResponseBody extends _AlexaResponseBody {
+  AlexaResponseBody(
+      {this.version = '1.0',
+      Map<String, dynamic> sessionAttributes,
+      this.response})
+      : this.sessionAttributes = Map.unmodifiable(sessionAttributes ?? {});
+
+  @override
+  String version;
+
+  @override
+  Map<String, dynamic> sessionAttributes;
+
+  @override
+  _AlexaResponse response;
+
+  AlexaResponseBody copyWith(
+      {String version,
+      Map<String, dynamic> sessionAttributes,
+      _AlexaResponse response}) {
+    return AlexaResponseBody(
+        version: version ?? this.version,
+        sessionAttributes: sessionAttributes ?? this.sessionAttributes,
+        response: response ?? this.response);
+  }
+
+  bool operator ==(other) {
+    return other is _AlexaResponseBody &&
+        other.version == version &&
+        MapEquality<String, dynamic>(
+                keys: DefaultEquality<String>(), values: DefaultEquality())
+            .equals(other.sessionAttributes, sessionAttributes) &&
+        other.response == response;
+  }
+
+  @override
+  int get hashCode {
+    return hashObjects([version, sessionAttributes, response]);
+  }
+
+  @override
+  String toString() {
+    return "AlexaResponseBody(version=$version, sessionAttributes=$sessionAttributes, response=$response)";
+  }
+
+  Map<String, dynamic> toJson() {
+    return AlexaResponseBodySerializer.toMap(this);
+  }
+}
+
+@generatedSerializable
+class AlexaResponse extends _AlexaResponse {
+  AlexaResponse(
+      {this.outputSpeech,
+      this.card,
+      this.reprompt,
+      List<Map<String, dynamic>> directives,
+      this.shouldEndSession})
+      : this.directives = List.unmodifiable(directives ?? []);
+
+  @override
+  _AlexaOutputSpeech outputSpeech;
+
+  @override
+  _AlexaCard card;
+
+  @override
+  _AlexaReprompt reprompt;
+
+  @override
+  List<Map<String, dynamic>> directives;
+
+  @override
+  bool shouldEndSession;
+
+  AlexaResponse copyWith(
+      {_AlexaOutputSpeech outputSpeech,
+      _AlexaCard card,
+      _AlexaReprompt reprompt,
+      List<Map<String, dynamic>> directives,
+      bool shouldEndSession}) {
+    return AlexaResponse(
+        outputSpeech: outputSpeech ?? this.outputSpeech,
+        card: card ?? this.card,
+        reprompt: reprompt ?? this.reprompt,
+        directives: directives ?? this.directives,
+        shouldEndSession: shouldEndSession ?? this.shouldEndSession);
+  }
+
+  bool operator ==(other) {
+    return other is _AlexaResponse &&
+        other.outputSpeech == outputSpeech &&
+        other.card == card &&
+        other.reprompt == reprompt &&
+        ListEquality<Map>(MapEquality<String, dynamic>(
+                keys: DefaultEquality<String>(), values: DefaultEquality()))
+            .equals(other.directives, directives) &&
+        other.shouldEndSession == shouldEndSession;
+  }
+
+  @override
+  int get hashCode {
+    return hashObjects(
+        [outputSpeech, card, reprompt, directives, shouldEndSession]);
+  }
+
+  @override
+  String toString() {
+    return "AlexaResponse(outputSpeech=$outputSpeech, card=$card, reprompt=$reprompt, directives=$directives, shouldEndSession=$shouldEndSession)";
+  }
+
+  Map<String, dynamic> toJson() {
+    return AlexaResponseSerializer.toMap(this);
+  }
+}
+
+@generatedSerializable
+class AlexaOutputSpeech extends _AlexaOutputSpeech {
+  AlexaOutputSpeech(
+      {this.type, this.title, this.text, this.ssml, this.playBehavior});
+
+  @override
+  String type;
+
+  @override
+  String title;
+
+  @override
+  String text;
+
+  @override
+  String ssml;
+
+  @override
+  String playBehavior;
+
+  AlexaOutputSpeech copyWith(
+      {String type,
+      String title,
+      String text,
+      String ssml,
+      String playBehavior}) {
+    return AlexaOutputSpeech(
+        type: type ?? this.type,
+        title: title ?? this.title,
+        text: text ?? this.text,
+        ssml: ssml ?? this.ssml,
+        playBehavior: playBehavior ?? this.playBehavior);
+  }
+
+  bool operator ==(other) {
+    return other is _AlexaOutputSpeech &&
+        other.type == type &&
+        other.title == title &&
+        other.text == text &&
+        other.ssml == ssml &&
+        other.playBehavior == playBehavior;
+  }
+
+  @override
+  int get hashCode {
+    return hashObjects([type, title, text, ssml, playBehavior]);
+  }
+
+  @override
+  String toString() {
+    return "AlexaOutputSpeech(type=$type, title=$title, text=$text, ssml=$ssml, playBehavior=$playBehavior)";
+  }
+
+  Map<String, dynamic> toJson() {
+    return AlexaOutputSpeechSerializer.toMap(this);
+  }
+}
+
+@generatedSerializable
+class AlexaCard extends _AlexaCard {
+  AlexaCard({this.type, this.title, this.content, this.text, this.image});
+
+  @override
+  String type;
+
+  @override
+  String title;
+
+  @override
+  String content;
+
+  @override
+  String text;
+
+  @override
+  _AlexaCardImage image;
+
+  AlexaCard copyWith(
+      {String type,
+      String title,
+      String content,
+      String text,
+      _AlexaCardImage image}) {
+    return AlexaCard(
+        type: type ?? this.type,
+        title: title ?? this.title,
+        content: content ?? this.content,
+        text: text ?? this.text,
+        image: image ?? this.image);
+  }
+
+  bool operator ==(other) {
+    return other is _AlexaCard &&
+        other.type == type &&
+        other.title == title &&
+        other.content == content &&
+        other.text == text &&
+        other.image == image;
+  }
+
+  @override
+  int get hashCode {
+    return hashObjects([type, title, content, text, image]);
+  }
+
+  @override
+  String toString() {
+    return "AlexaCard(type=$type, title=$title, content=$content, text=$text, image=$image)";
+  }
+
+  Map<String, dynamic> toJson() {
+    return AlexaCardSerializer.toMap(this);
+  }
+}
+
+@generatedSerializable
+class AlexaCardImage extends _AlexaCardImage {
+  AlexaCardImage({this.smallImageUrl, this.largeImageUrl});
+
+  @override
+  String smallImageUrl;
+
+  @override
+  String largeImageUrl;
+
+  AlexaCardImage copyWith({String smallImageUrl, String largeImageUrl}) {
+    return AlexaCardImage(
+        smallImageUrl: smallImageUrl ?? this.smallImageUrl,
+        largeImageUrl: largeImageUrl ?? this.largeImageUrl);
+  }
+
+  bool operator ==(other) {
+    return other is _AlexaCardImage &&
+        other.smallImageUrl == smallImageUrl &&
+        other.largeImageUrl == largeImageUrl;
+  }
+
+  @override
+  int get hashCode {
+    return hashObjects([smallImageUrl, largeImageUrl]);
+  }
+
+  @override
+  String toString() {
+    return "AlexaCardImage(smallImageUrl=$smallImageUrl, largeImageUrl=$largeImageUrl)";
+  }
+
+  Map<String, dynamic> toJson() {
+    return AlexaCardImageSerializer.toMap(this);
+  }
+}
+
+@generatedSerializable
+class AlexaReprompt extends _AlexaReprompt {
+  AlexaReprompt({this.outputSpeech});
+
+  @override
+  _AlexaOutputSpeech outputSpeech;
+
+  AlexaReprompt copyWith({_AlexaOutputSpeech outputSpeech}) {
+    return AlexaReprompt(outputSpeech: outputSpeech ?? this.outputSpeech);
+  }
+
+  bool operator ==(other) {
+    return other is _AlexaReprompt && other.outputSpeech == outputSpeech;
+  }
+
+  @override
+  int get hashCode {
+    return hashObjects([outputSpeech]);
+  }
+
+  @override
+  String toString() {
+    return "AlexaReprompt(outputSpeech=$outputSpeech)";
+  }
+
+  Map<String, dynamic> toJson() {
+    return AlexaRepromptSerializer.toMap(this);
+  }
+}
+
+@generatedSerializable
+class AlexaCanFulfillIntentResponse extends _AlexaCanFulfillIntentResponse {
+  AlexaCanFulfillIntentResponse(
+      {this.requestId,
+      this.type,
+      this.locale,
+      this.timestamp,
+      this.canFulfill,
+      Map<String, _AlexaSlot> slots})
+      : this.slots = Map.unmodifiable(slots ?? {});
+
+  /// Represents a unique identifier for the specific request.
+  @override
+  String requestId;
+
+  /// Describes the request type. See [AlexaRequestType].
+  @override
+  String type;
+
+  /// A string indicating the user's locale. For example: `en-US`.
+  @override
+  String locale;
+
+  /// Provides the date and time when Alexa sent the request as an ISO 8601 formatted string.
+  /// Used to verify the request when hosting your skill as a web service.
+  @override
+  String timestamp;
+
+  /// Represents an overall response to whether the skill
+  /// can understand and fulfill the intent with detected slots.
+  @override
+  String canFulfill;
+
+  /// A map that represents a detailed response to each detected slot
+  /// within the intent and whether the skill can understand and fulfill
+  /// the slot. The map supplements the overall canFulfill response for
+  /// the intent, and helps Alexa make better ranking and arbitration
+  /// decisions.
+  @override
+  Map<String, _AlexaSlot> slots;
+
+  AlexaCanFulfillIntentResponse copyWith(
+      {String requestId,
+      String type,
+      String locale,
+      String timestamp,
+      String canFulfill,
+      Map<String, _AlexaSlot> slots}) {
+    return AlexaCanFulfillIntentResponse(
+        requestId: requestId ?? this.requestId,
+        type: type ?? this.type,
+        locale: locale ?? this.locale,
+        timestamp: timestamp ?? this.timestamp,
+        canFulfill: canFulfill ?? this.canFulfill,
+        slots: slots ?? this.slots);
+  }
+
+  bool operator ==(other) {
+    return other is _AlexaCanFulfillIntentResponse &&
+        other.requestId == requestId &&
+        other.type == type &&
+        other.locale == locale &&
+        other.timestamp == timestamp &&
+        other.canFulfill == canFulfill &&
+        MapEquality<String, _AlexaSlot>(
+                keys: DefaultEquality<String>(),
+                values: DefaultEquality<_AlexaSlot>())
+            .equals(other.slots, slots);
+  }
+
+  @override
+  int get hashCode {
+    return hashObjects([requestId, type, locale, timestamp, canFulfill, slots]);
+  }
+
+  @override
+  String toString() {
+    return "AlexaCanFulfillIntentResponse(requestId=$requestId, type=$type, locale=$locale, timestamp=$timestamp, canFulfill=$canFulfill, slots=$slots)";
+  }
+
+  Map<String, dynamic> toJson() {
+    return AlexaCanFulfillIntentResponseSerializer.toMap(this);
+  }
+}
+
 // **************************************************************************
 // SerializerGenerator
 // **************************************************************************
@@ -943,9 +1497,9 @@ class AlexaLaunchRequestSerializer extends Codec<AlexaLaunchRequest, Map> {
   get decoder => const AlexaLaunchRequestDecoder();
   static AlexaLaunchRequest fromMap(Map map) {
     return AlexaLaunchRequest(
+        requestId: map['requestId'] as String,
         type: map['type'] as String,
         locale: map['locale'] as String,
-        requestId: map['requestId'] as String,
         timestamp: map['timestamp'] as String);
   }
 
@@ -954,9 +1508,9 @@ class AlexaLaunchRequestSerializer extends Codec<AlexaLaunchRequest, Map> {
       return null;
     }
     return {
+      'requestId': model.requestId,
       'type': model.type,
       'locale': model.locale,
-      'requestId': model.requestId,
       'timestamp': model.timestamp
     };
   }
@@ -964,17 +1518,17 @@ class AlexaLaunchRequestSerializer extends Codec<AlexaLaunchRequest, Map> {
 
 abstract class AlexaLaunchRequestFields {
   static const List<String> allFields = <String>[
+    requestId,
     type,
     locale,
-    requestId,
     timestamp
   ];
+
+  static const String requestId = 'requestId';
 
   static const String type = 'type';
 
   static const String locale = 'locale';
-
-  static const String requestId = 'requestId';
 
   static const String timestamp = 'timestamp';
 }
@@ -1011,15 +1565,12 @@ class AlexaCanFulfillIntentRequestSerializer
   get decoder => const AlexaCanFulfillIntentRequestDecoder();
   static AlexaCanFulfillIntentRequest fromMap(Map map) {
     return AlexaCanFulfillIntentRequest(
+        requestId: map['requestId'] as String,
         type: map['type'] as String,
         locale: map['locale'] as String,
-        canFulfill: map['canFulfill'] as String,
-        slots: map['slots'] is Map
-            ? Map.unmodifiable((map['slots'] as Map).keys.fold({}, (out, key) {
-                return out
-                  ..[key] = AlexaSlotSerializer.fromMap(
-                      ((map['slots'] as Map)[key]) as Map);
-              }))
+        timestamp: map['timestamp'] as String,
+        intent: map['intent'] != null
+            ? AlexaIntentSerializer.fromMap(map['intent'] as Map)
             : null);
   }
 
@@ -1028,31 +1579,33 @@ class AlexaCanFulfillIntentRequestSerializer
       return null;
     }
     return {
+      'requestId': model.requestId,
       'type': model.type,
       'locale': model.locale,
-      'canFulfill': model.canFulfill,
-      'slots': model.slots.keys?.fold({}, (map, key) {
-        return map..[key] = AlexaSlotSerializer.toMap(model.slots[key]);
-      })
+      'timestamp': model.timestamp,
+      'intent': AlexaIntentSerializer.toMap(model.intent)
     };
   }
 }
 
 abstract class AlexaCanFulfillIntentRequestFields {
   static const List<String> allFields = <String>[
+    requestId,
     type,
     locale,
-    canFulfill,
-    slots
+    timestamp,
+    intent
   ];
+
+  static const String requestId = 'requestId';
 
   static const String type = 'type';
 
   static const String locale = 'locale';
 
-  static const String canFulfill = 'canFulfill';
+  static const String timestamp = 'timestamp';
 
-  static const String slots = 'slots';
+  static const String intent = 'intent';
 }
 
 const AlexaSlotSerializer alexaSlotSerializer = AlexaSlotSerializer();
@@ -1367,23 +1920,116 @@ class AlexaIntentRequestSerializer extends Codec<AlexaIntentRequest, Map> {
   get decoder => const AlexaIntentRequestDecoder();
   static AlexaIntentRequest fromMap(Map map) {
     return AlexaIntentRequest(
-        type: map['type'] as String, locale: map['locale'] as String);
+        requestId: map['requestId'] as String,
+        type: map['type'] as String,
+        locale: map['locale'] as String,
+        timestamp: map['timestamp'] as String,
+        dialogState: map['dialogState'] as String,
+        intent: map['intent'] != null
+            ? AlexaIntentSerializer.fromMap(map['intent'] as Map)
+            : null);
   }
 
   static Map<String, dynamic> toMap(_AlexaIntentRequest model) {
     if (model == null) {
       return null;
     }
-    return {'type': model.type, 'locale': model.locale};
+    return {
+      'requestId': model.requestId,
+      'type': model.type,
+      'locale': model.locale,
+      'timestamp': model.timestamp,
+      'dialogState': model.dialogState,
+      'intent': AlexaIntentSerializer.toMap(model.intent)
+    };
   }
 }
 
 abstract class AlexaIntentRequestFields {
-  static const List<String> allFields = <String>[type, locale];
+  static const List<String> allFields = <String>[
+    requestId,
+    type,
+    locale,
+    timestamp,
+    dialogState,
+    intent
+  ];
+
+  static const String requestId = 'requestId';
 
   static const String type = 'type';
 
   static const String locale = 'locale';
+
+  static const String timestamp = 'timestamp';
+
+  static const String dialogState = 'dialogState';
+
+  static const String intent = 'intent';
+}
+
+const AlexaIntentSerializer alexaIntentSerializer = AlexaIntentSerializer();
+
+class AlexaIntentEncoder extends Converter<AlexaIntent, Map> {
+  const AlexaIntentEncoder();
+
+  @override
+  Map convert(AlexaIntent model) => AlexaIntentSerializer.toMap(model);
+}
+
+class AlexaIntentDecoder extends Converter<Map, AlexaIntent> {
+  const AlexaIntentDecoder();
+
+  @override
+  AlexaIntent convert(Map map) => AlexaIntentSerializer.fromMap(map);
+}
+
+class AlexaIntentSerializer extends Codec<AlexaIntent, Map> {
+  const AlexaIntentSerializer();
+
+  @override
+  get encoder => const AlexaIntentEncoder();
+  @override
+  get decoder => const AlexaIntentDecoder();
+  static AlexaIntent fromMap(Map map) {
+    return AlexaIntent(
+        name: map['name'] as String,
+        confirmationStatus: map['confirmationStatus'] as String,
+        slots: map['slots'] is Map
+            ? Map.unmodifiable((map['slots'] as Map).keys.fold({}, (out, key) {
+                return out
+                  ..[key] = AlexaSlotSerializer.fromMap(
+                      ((map['slots'] as Map)[key]) as Map);
+              }))
+            : null);
+  }
+
+  static Map<String, dynamic> toMap(_AlexaIntent model) {
+    if (model == null) {
+      return null;
+    }
+    return {
+      'name': model.name,
+      'confirmationStatus': model.confirmationStatus,
+      'slots': model.slots.keys?.fold({}, (map, key) {
+        return map..[key] = AlexaSlotSerializer.toMap(model.slots[key]);
+      })
+    };
+  }
+}
+
+abstract class AlexaIntentFields {
+  static const List<String> allFields = <String>[
+    name,
+    confirmationStatus,
+    slots
+  ];
+
+  static const String name = 'name';
+
+  static const String confirmationStatus = 'confirmationStatus';
+
+  static const String slots = 'slots';
 }
 
 const AlexaSessionEndedRequestSerializer alexaSessionEndedRequestSerializer =
@@ -1417,23 +2063,96 @@ class AlexaSessionEndedRequestSerializer
   get decoder => const AlexaSessionEndedRequestDecoder();
   static AlexaSessionEndedRequest fromMap(Map map) {
     return AlexaSessionEndedRequest(
-        type: map['type'] as String, locale: map['locale'] as String);
+        requestId: map['requestId'] as String,
+        type: map['type'] as String,
+        locale: map['locale'] as String,
+        timestamp: map['timestamp'] as String,
+        reason: map['reason'] as String,
+        error: map['error'] != null
+            ? AlexaErrorSerializer.fromMap(map['error'] as Map)
+            : null);
   }
 
   static Map<String, dynamic> toMap(_AlexaSessionEndedRequest model) {
     if (model == null) {
       return null;
     }
-    return {'type': model.type, 'locale': model.locale};
+    return {
+      'requestId': model.requestId,
+      'type': model.type,
+      'locale': model.locale,
+      'timestamp': model.timestamp,
+      'reason': model.reason,
+      'error': AlexaErrorSerializer.toMap(model.error)
+    };
   }
 }
 
 abstract class AlexaSessionEndedRequestFields {
-  static const List<String> allFields = <String>[type, locale];
+  static const List<String> allFields = <String>[
+    requestId,
+    type,
+    locale,
+    timestamp,
+    reason,
+    error
+  ];
+
+  static const String requestId = 'requestId';
 
   static const String type = 'type';
 
   static const String locale = 'locale';
+
+  static const String timestamp = 'timestamp';
+
+  static const String reason = 'reason';
+
+  static const String error = 'error';
+}
+
+const AlexaErrorSerializer alexaErrorSerializer = AlexaErrorSerializer();
+
+class AlexaErrorEncoder extends Converter<AlexaError, Map> {
+  const AlexaErrorEncoder();
+
+  @override
+  Map convert(AlexaError model) => AlexaErrorSerializer.toMap(model);
+}
+
+class AlexaErrorDecoder extends Converter<Map, AlexaError> {
+  const AlexaErrorDecoder();
+
+  @override
+  AlexaError convert(Map map) => AlexaErrorSerializer.fromMap(map);
+}
+
+class AlexaErrorSerializer extends Codec<AlexaError, Map> {
+  const AlexaErrorSerializer();
+
+  @override
+  get encoder => const AlexaErrorEncoder();
+  @override
+  get decoder => const AlexaErrorDecoder();
+  static AlexaError fromMap(Map map) {
+    return AlexaError(
+        type: map['type'] as String, message: map['message'] as String);
+  }
+
+  static Map<String, dynamic> toMap(_AlexaError model) {
+    if (model == null) {
+      return null;
+    }
+    return {'type': model.type, 'message': model.message};
+  }
+}
+
+abstract class AlexaErrorFields {
+  static const List<String> allFields = <String>[type, message];
+
+  static const String type = 'type';
+
+  static const String message = 'message';
 }
 
 const AlexaSessionSerializer alexaSessionSerializer = AlexaSessionSerializer();
@@ -1882,4 +2601,463 @@ abstract class AlexaAudioPlayerFields {
   static const String offsetInMilliseconds = 'offsetInMilliseconds';
 
   static const String playerActivity = 'playerActivity';
+}
+
+const AlexaResponseBodySerializer alexaResponseBodySerializer =
+    AlexaResponseBodySerializer();
+
+class AlexaResponseBodyEncoder extends Converter<AlexaResponseBody, Map> {
+  const AlexaResponseBodyEncoder();
+
+  @override
+  Map convert(AlexaResponseBody model) =>
+      AlexaResponseBodySerializer.toMap(model);
+}
+
+class AlexaResponseBodyDecoder extends Converter<Map, AlexaResponseBody> {
+  const AlexaResponseBodyDecoder();
+
+  @override
+  AlexaResponseBody convert(Map map) =>
+      AlexaResponseBodySerializer.fromMap(map);
+}
+
+class AlexaResponseBodySerializer extends Codec<AlexaResponseBody, Map> {
+  const AlexaResponseBodySerializer();
+
+  @override
+  get encoder => const AlexaResponseBodyEncoder();
+  @override
+  get decoder => const AlexaResponseBodyDecoder();
+  static AlexaResponseBody fromMap(Map map) {
+    return AlexaResponseBody(
+        version: map['version'] as String ?? '1.0',
+        sessionAttributes: map['sessionAttributes'] is Map
+            ? (map['sessionAttributes'] as Map).cast<String, dynamic>()
+            : null,
+        response: map['response'] != null
+            ? AlexaResponseSerializer.fromMap(map['response'] as Map)
+            : null);
+  }
+
+  static Map<String, dynamic> toMap(_AlexaResponseBody model) {
+    if (model == null) {
+      return null;
+    }
+    return {
+      'version': model.version,
+      'sessionAttributes': model.sessionAttributes,
+      'response': AlexaResponseSerializer.toMap(model.response)
+    };
+  }
+}
+
+abstract class AlexaResponseBodyFields {
+  static const List<String> allFields = <String>[
+    version,
+    sessionAttributes,
+    response
+  ];
+
+  static const String version = 'version';
+
+  static const String sessionAttributes = 'sessionAttributes';
+
+  static const String response = 'response';
+}
+
+const AlexaResponseSerializer alexaResponseSerializer =
+    AlexaResponseSerializer();
+
+class AlexaResponseEncoder extends Converter<AlexaResponse, Map> {
+  const AlexaResponseEncoder();
+
+  @override
+  Map convert(AlexaResponse model) => AlexaResponseSerializer.toMap(model);
+}
+
+class AlexaResponseDecoder extends Converter<Map, AlexaResponse> {
+  const AlexaResponseDecoder();
+
+  @override
+  AlexaResponse convert(Map map) => AlexaResponseSerializer.fromMap(map);
+}
+
+class AlexaResponseSerializer extends Codec<AlexaResponse, Map> {
+  const AlexaResponseSerializer();
+
+  @override
+  get encoder => const AlexaResponseEncoder();
+  @override
+  get decoder => const AlexaResponseDecoder();
+  static AlexaResponse fromMap(Map map) {
+    return AlexaResponse(
+        outputSpeech: map['outputSpeech'] != null
+            ? AlexaOutputSpeechSerializer.fromMap(map['outputSpeech'] as Map)
+            : null,
+        card: map['card'] != null
+            ? AlexaCardSerializer.fromMap(map['card'] as Map)
+            : null,
+        reprompt: map['reprompt'] != null
+            ? AlexaRepromptSerializer.fromMap(map['reprompt'] as Map)
+            : null,
+        directives: map['directives'] is Iterable
+            ? (map['directives'] as Iterable)
+                .cast<Map<String, dynamic>>()
+                .toList()
+            : null,
+        shouldEndSession: map['shouldEndSession'] as bool);
+  }
+
+  static Map<String, dynamic> toMap(_AlexaResponse model) {
+    if (model == null) {
+      return null;
+    }
+    return {
+      'outputSpeech': AlexaOutputSpeechSerializer.toMap(model.outputSpeech),
+      'card': AlexaCardSerializer.toMap(model.card),
+      'reprompt': AlexaRepromptSerializer.toMap(model.reprompt),
+      'directives': model.directives,
+      'shouldEndSession': model.shouldEndSession
+    };
+  }
+}
+
+abstract class AlexaResponseFields {
+  static const List<String> allFields = <String>[
+    outputSpeech,
+    card,
+    reprompt,
+    directives,
+    shouldEndSession
+  ];
+
+  static const String outputSpeech = 'outputSpeech';
+
+  static const String card = 'card';
+
+  static const String reprompt = 'reprompt';
+
+  static const String directives = 'directives';
+
+  static const String shouldEndSession = 'shouldEndSession';
+}
+
+const AlexaOutputSpeechSerializer alexaOutputSpeechSerializer =
+    AlexaOutputSpeechSerializer();
+
+class AlexaOutputSpeechEncoder extends Converter<AlexaOutputSpeech, Map> {
+  const AlexaOutputSpeechEncoder();
+
+  @override
+  Map convert(AlexaOutputSpeech model) =>
+      AlexaOutputSpeechSerializer.toMap(model);
+}
+
+class AlexaOutputSpeechDecoder extends Converter<Map, AlexaOutputSpeech> {
+  const AlexaOutputSpeechDecoder();
+
+  @override
+  AlexaOutputSpeech convert(Map map) =>
+      AlexaOutputSpeechSerializer.fromMap(map);
+}
+
+class AlexaOutputSpeechSerializer extends Codec<AlexaOutputSpeech, Map> {
+  const AlexaOutputSpeechSerializer();
+
+  @override
+  get encoder => const AlexaOutputSpeechEncoder();
+  @override
+  get decoder => const AlexaOutputSpeechDecoder();
+  static AlexaOutputSpeech fromMap(Map map) {
+    return AlexaOutputSpeech(
+        type: map['type'] as String,
+        title: map['title'] as String,
+        text: map['text'] as String,
+        ssml: map['ssml'] as String,
+        playBehavior: map['playBehavior'] as String);
+  }
+
+  static Map<String, dynamic> toMap(_AlexaOutputSpeech model) {
+    if (model == null) {
+      return null;
+    }
+    return {
+      'type': model.type,
+      'title': model.title,
+      'text': model.text,
+      'ssml': model.ssml,
+      'playBehavior': model.playBehavior
+    };
+  }
+}
+
+abstract class AlexaOutputSpeechFields {
+  static const List<String> allFields = <String>[
+    type,
+    title,
+    text,
+    ssml,
+    playBehavior
+  ];
+
+  static const String type = 'type';
+
+  static const String title = 'title';
+
+  static const String text = 'text';
+
+  static const String ssml = 'ssml';
+
+  static const String playBehavior = 'playBehavior';
+}
+
+const AlexaCardSerializer alexaCardSerializer = AlexaCardSerializer();
+
+class AlexaCardEncoder extends Converter<AlexaCard, Map> {
+  const AlexaCardEncoder();
+
+  @override
+  Map convert(AlexaCard model) => AlexaCardSerializer.toMap(model);
+}
+
+class AlexaCardDecoder extends Converter<Map, AlexaCard> {
+  const AlexaCardDecoder();
+
+  @override
+  AlexaCard convert(Map map) => AlexaCardSerializer.fromMap(map);
+}
+
+class AlexaCardSerializer extends Codec<AlexaCard, Map> {
+  const AlexaCardSerializer();
+
+  @override
+  get encoder => const AlexaCardEncoder();
+  @override
+  get decoder => const AlexaCardDecoder();
+  static AlexaCard fromMap(Map map) {
+    return AlexaCard(
+        type: map['type'] as String,
+        title: map['title'] as String,
+        content: map['content'] as String,
+        text: map['text'] as String,
+        image: map['image'] != null
+            ? AlexaCardImageSerializer.fromMap(map['image'] as Map)
+            : null);
+  }
+
+  static Map<String, dynamic> toMap(_AlexaCard model) {
+    if (model == null) {
+      return null;
+    }
+    return {
+      'type': model.type,
+      'title': model.title,
+      'content': model.content,
+      'text': model.text,
+      'image': AlexaCardImageSerializer.toMap(model.image)
+    };
+  }
+}
+
+abstract class AlexaCardFields {
+  static const List<String> allFields = <String>[
+    type,
+    title,
+    content,
+    text,
+    image
+  ];
+
+  static const String type = 'type';
+
+  static const String title = 'title';
+
+  static const String content = 'content';
+
+  static const String text = 'text';
+
+  static const String image = 'image';
+}
+
+const AlexaCardImageSerializer alexaCardImageSerializer =
+    AlexaCardImageSerializer();
+
+class AlexaCardImageEncoder extends Converter<AlexaCardImage, Map> {
+  const AlexaCardImageEncoder();
+
+  @override
+  Map convert(AlexaCardImage model) => AlexaCardImageSerializer.toMap(model);
+}
+
+class AlexaCardImageDecoder extends Converter<Map, AlexaCardImage> {
+  const AlexaCardImageDecoder();
+
+  @override
+  AlexaCardImage convert(Map map) => AlexaCardImageSerializer.fromMap(map);
+}
+
+class AlexaCardImageSerializer extends Codec<AlexaCardImage, Map> {
+  const AlexaCardImageSerializer();
+
+  @override
+  get encoder => const AlexaCardImageEncoder();
+  @override
+  get decoder => const AlexaCardImageDecoder();
+  static AlexaCardImage fromMap(Map map) {
+    return AlexaCardImage(
+        smallImageUrl: map['smallImageUrl'] as String,
+        largeImageUrl: map['largeImageUrl'] as String);
+  }
+
+  static Map<String, dynamic> toMap(_AlexaCardImage model) {
+    if (model == null) {
+      return null;
+    }
+    return {
+      'smallImageUrl': model.smallImageUrl,
+      'largeImageUrl': model.largeImageUrl
+    };
+  }
+}
+
+abstract class AlexaCardImageFields {
+  static const List<String> allFields = <String>[smallImageUrl, largeImageUrl];
+
+  static const String smallImageUrl = 'smallImageUrl';
+
+  static const String largeImageUrl = 'largeImageUrl';
+}
+
+const AlexaRepromptSerializer alexaRepromptSerializer =
+    AlexaRepromptSerializer();
+
+class AlexaRepromptEncoder extends Converter<AlexaReprompt, Map> {
+  const AlexaRepromptEncoder();
+
+  @override
+  Map convert(AlexaReprompt model) => AlexaRepromptSerializer.toMap(model);
+}
+
+class AlexaRepromptDecoder extends Converter<Map, AlexaReprompt> {
+  const AlexaRepromptDecoder();
+
+  @override
+  AlexaReprompt convert(Map map) => AlexaRepromptSerializer.fromMap(map);
+}
+
+class AlexaRepromptSerializer extends Codec<AlexaReprompt, Map> {
+  const AlexaRepromptSerializer();
+
+  @override
+  get encoder => const AlexaRepromptEncoder();
+  @override
+  get decoder => const AlexaRepromptDecoder();
+  static AlexaReprompt fromMap(Map map) {
+    return AlexaReprompt(
+        outputSpeech: map['outputSpeech'] != null
+            ? AlexaOutputSpeechSerializer.fromMap(map['outputSpeech'] as Map)
+            : null);
+  }
+
+  static Map<String, dynamic> toMap(_AlexaReprompt model) {
+    if (model == null) {
+      return null;
+    }
+    return {
+      'outputSpeech': AlexaOutputSpeechSerializer.toMap(model.outputSpeech)
+    };
+  }
+}
+
+abstract class AlexaRepromptFields {
+  static const List<String> allFields = <String>[outputSpeech];
+
+  static const String outputSpeech = 'outputSpeech';
+}
+
+const AlexaCanFulfillIntentResponseSerializer
+    alexaCanFulfillIntentResponseSerializer =
+    AlexaCanFulfillIntentResponseSerializer();
+
+class AlexaCanFulfillIntentResponseEncoder
+    extends Converter<AlexaCanFulfillIntentResponse, Map> {
+  const AlexaCanFulfillIntentResponseEncoder();
+
+  @override
+  Map convert(AlexaCanFulfillIntentResponse model) =>
+      AlexaCanFulfillIntentResponseSerializer.toMap(model);
+}
+
+class AlexaCanFulfillIntentResponseDecoder
+    extends Converter<Map, AlexaCanFulfillIntentResponse> {
+  const AlexaCanFulfillIntentResponseDecoder();
+
+  @override
+  AlexaCanFulfillIntentResponse convert(Map map) =>
+      AlexaCanFulfillIntentResponseSerializer.fromMap(map);
+}
+
+class AlexaCanFulfillIntentResponseSerializer
+    extends Codec<AlexaCanFulfillIntentResponse, Map> {
+  const AlexaCanFulfillIntentResponseSerializer();
+
+  @override
+  get encoder => const AlexaCanFulfillIntentResponseEncoder();
+  @override
+  get decoder => const AlexaCanFulfillIntentResponseDecoder();
+  static AlexaCanFulfillIntentResponse fromMap(Map map) {
+    return AlexaCanFulfillIntentResponse(
+        requestId: map['requestId'] as String,
+        type: map['type'] as String,
+        locale: map['locale'] as String,
+        timestamp: map['timestamp'] as String,
+        canFulfill: map['canFulfill'] as String,
+        slots: map['slots'] is Map
+            ? Map.unmodifiable((map['slots'] as Map).keys.fold({}, (out, key) {
+                return out
+                  ..[key] = AlexaSlotSerializer.fromMap(
+                      ((map['slots'] as Map)[key]) as Map);
+              }))
+            : null);
+  }
+
+  static Map<String, dynamic> toMap(_AlexaCanFulfillIntentResponse model) {
+    if (model == null) {
+      return null;
+    }
+    return {
+      'requestId': model.requestId,
+      'type': model.type,
+      'locale': model.locale,
+      'timestamp': model.timestamp,
+      'canFulfill': model.canFulfill,
+      'slots': model.slots.keys?.fold({}, (map, key) {
+        return map..[key] = AlexaSlotSerializer.toMap(model.slots[key]);
+      })
+    };
+  }
+}
+
+abstract class AlexaCanFulfillIntentResponseFields {
+  static const List<String> allFields = <String>[
+    requestId,
+    type,
+    locale,
+    timestamp,
+    canFulfill,
+    slots
+  ];
+
+  static const String requestId = 'requestId';
+
+  static const String type = 'type';
+
+  static const String locale = 'locale';
+
+  static const String timestamp = 'timestamp';
+
+  static const String canFulfill = 'canFulfill';
+
+  static const String slots = 'slots';
 }

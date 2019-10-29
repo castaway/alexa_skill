@@ -1,6 +1,6 @@
 import 'package:angel_serialize/angel_serialize.dart';
 import 'constants.dart';
-part 'request.g.dart';
+part 'models.g.dart';
 
 const Serializable alexaSerializable = Serializable(autoSnakeCaseNames: false);
 
@@ -85,33 +85,14 @@ class _AlexaRequestBody {
 /// but did not provide a specific intent.
 @alexaSerializable
 class _AlexaLaunchRequest extends AlexaRequest {
-  /// Represents a unique identifier for the specific request.
-  String requestId;
-
-  /// Provides the date and time when Alexa sent the request as an ISO 8601 formatted string.
-  /// Used to verify the request when hosting your skill as a web service.
-  String timestamp;
-
-  /// Provides the date and time when Alexa sent the request.
-  /// Used to verify the request when hosting your skill as a web service.
-  ///
-  /// The implementation parses the [timestamp], if any.
-  DateTime get timestampAsDateTime =>
-      timestamp == null ? null : DateTime.tryParse(timestamp);
+  // ignore: unused_field
+  String _i;
 }
 
 @alexaSerializable
 class _AlexaCanFulfillIntentRequest extends AlexaRequest {
-  /// Represents an overall response to whether the skill
-  /// can understand and fulfill the intent with detected slots.
-  String canFulfill;
-
-  /// A map that represents a detailed response to each detected slot
-  /// within the intent and whether the skill can understand and fulfill
-  /// the slot. The map supplements the overall canFulfill response for
-  /// the intent, and helps Alexa make better ranking and arbitration
-  /// decisions.
-  Map<String, _AlexaSlot> slots;
+  /// An object that represents what the user wants.
+  _AlexaIntent intent;
 }
 
 @alexaSerializable
@@ -185,10 +166,48 @@ class _AlexaResolutionAuthorityValue {
 }
 
 @alexaSerializable
-class _AlexaIntentRequest extends AlexaRequest {}
+class _AlexaIntentRequest extends AlexaRequest {
+  /// Enumeration indicating the status of the multi-turn dialog.
+  ///
+  /// This property is included if the skill has a dialog model.
+  String dialogState;
+
+  /// An object that represents what the user wants.
+  _AlexaIntent intent;
+}
 
 @alexaSerializable
-class _AlexaSessionEndedRequest extends AlexaRequest {}
+class _AlexaIntent {
+  /// A string representing the name of the intent.
+  String name;
+
+  /// An enumeration indicating whether the user has explicitly confirmed
+  /// or denied the entire intent.
+  String confirmationStatus;
+
+  /// A map of key-value pairs that further describes what the user meant
+  /// based on a predefined intent schema. The map can be empty.
+  Map<String, _AlexaSlot> slots;
+}
+
+@alexaSerializable
+class _AlexaSessionEndedRequest extends AlexaRequest {
+  /// Describes why the session ended.
+  String reason;
+
+  /// An error object providing more information about the error
+  /// that occurred.
+  _AlexaError error;
+}
+
+@alexaSerializable
+class _AlexaError {
+  /// A [String] indicating the type of error that occurred.
+  String type;
+
+  /// A [String] providing more information about the error.
+  String message;
+}
 
 @alexaSerializable
 class _AlexaSession {
@@ -251,9 +270,85 @@ class _AlexaAudioPlayer {
 
 /// Base class for standard Alexa request types.
 abstract class AlexaRequest {
+  /// Represents a unique identifier for the specific request.
+  String requestId;
+
   /// Describes the request type. See [AlexaRequestType].
   String type;
 
   /// A string indicating the user's locale. For example: `en-US`.
   String locale;
+
+  /// Provides the date and time when Alexa sent the request as an ISO 8601 formatted string.
+  /// Used to verify the request when hosting your skill as a web service.
+  String timestamp;
+
+  /// Provides the date and time when Alexa sent the request.
+  /// Used to verify the request when hosting your skill as a web service.
+  ///
+  /// The implementation parses the [timestamp], if any.
+  DateTime get timestampAsDateTime =>
+      timestamp == null ? null : DateTime.tryParse(timestamp);
+}
+
+// Responses...
+
+@alexaSerializable
+class _AlexaResponseBody {
+  @DefaultsTo('1.0')
+  String version;
+  Map<String, dynamic> sessionAttributes;
+  _AlexaResponse response;
+}
+
+@alexaSerializable
+class _AlexaResponse {
+  _AlexaOutputSpeech outputSpeech;
+  _AlexaCard card;
+  _AlexaReprompt reprompt;
+  List<Map<String, dynamic>> directives;
+  bool shouldEndSession;
+}
+
+@alexaSerializable
+class _AlexaOutputSpeech {
+  String type;
+  String title;
+  String text;
+  String ssml;
+  String playBehavior;
+}
+
+@alexaSerializable
+class _AlexaCard {
+  String type;
+  String title;
+  String content;
+  String text;
+  _AlexaCardImage image;
+}
+
+@alexaSerializable
+class _AlexaCardImage {
+  String smallImageUrl;
+  String largeImageUrl;
+}
+
+@alexaSerializable
+class _AlexaReprompt {
+  _AlexaOutputSpeech outputSpeech;
+}
+
+@alexaSerializable
+class _AlexaCanFulfillIntentResponse extends AlexaRequest {
+  /// Represents an overall response to whether the skill
+  /// can understand and fulfill the intent with detected slots.
+  String canFulfill;
+
+  /// A map that represents a detailed response to each detected slot
+  /// within the intent and whether the skill can understand and fulfill
+  /// the slot. The map supplements the overall canFulfill response for
+  /// the intent, and helps Alexa make better ranking and arbitration
+  /// decisions.
+  Map<String, _AlexaSlot> slots;
 }
