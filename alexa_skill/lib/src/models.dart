@@ -135,7 +135,7 @@ class _AlexaRequestSlot {
 
   /// An enumeration indicating whether the user has explicitly
   /// confirmed or denied the value of this slot.
-  /// 
+  ///
   /// Possible values are enumerated in [AlexaConfirmationStatus].
   String confirmationStatus;
 

@@ -1,10 +1,10 @@
 // TODO: Move this into its own Pub package.
 library alexa_skill.src.pem;
 
-import 'dart:convert';
-import 'dart:io';
+// import 'dart:convert';
+// import 'dart:io';
 import 'package:asn1lib/asn1lib.dart';
-import 'package:charcode/ascii.dart';
+// import 'package:charcode/ascii.dart';
 import 'package:string_scanner/string_scanner.dart';
 import 'package:x509csr/x509csr.dart';
 
@@ -71,6 +71,6 @@ class PemParser {
     print(asn1Parser.nextObject());
 
     return null;
-    return Certificate(String.fromCharCodes(base64.decode(b.toString())));
+    // return Certificate(String.fromCharCodes(base64.decode(b.toString())));
   }
 }

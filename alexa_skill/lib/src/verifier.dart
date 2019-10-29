@@ -17,7 +17,8 @@ class AlexaRequestVerifier {
 
   Future<String> downloadPem(Uri uri) async {
     // TODO: Cache these using ETags + last-modified
-    var response = await httpClient.get(uri);
+    // var response = await httpClient.get(uri);
+    return null;
   }
 
   Future<bool> verifyHeaders(Map<String, String> headers) {
@@ -44,7 +45,8 @@ class AlexaRequestVerifier {
     }
 
     // Download the certificate chain
-    var pem = await downloadPem(normalized);
+    // var pem = await downloadPem(normalized);
     // TODO: ...
+    return false;
   }
 }
