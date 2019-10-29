@@ -31,6 +31,7 @@ main() async {
         if (requestBody.requestType == AlexaRequestType.launchRequest) {
           // Send a basic text response.
           responseBody.response = AlexaResponse(
+            shouldEndSession: true,
             outputSpeech: AlexaOutputSpeech(
               type: AlexaOutputSpeechType.plainText,
               text: 'Hello, world!',
