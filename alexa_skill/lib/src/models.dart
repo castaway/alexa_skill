@@ -239,60 +239,171 @@ class _AlexaError {
 
 @_alexaSerializable
 class _AlexaSession {
+  /// A boolean value indicating whether this is a new session.
+  ///
+  /// Returns `true` for a new session or `false` for an existing session.
   @HasAlias('new')
   bool isNew;
+
+  /// A string that represents a unique identifier per a user's active session.
+  ///
+  /// Note: A [sessionId] is consistent for multiple subsequent requests for a user
+  /// and session. If the session ends for a user, then a new unique [sessionId] value
+  /// is provided for subsequent requests for the same user.
   String sessionId;
+
+  /// A map of key-value pairs. The attributes map is empty for requests where a new
+  /// session has started with the property new set to true.
+  ///
+  /// The key is a string that represents the name of the attribute.
+  /// The value is an object that represents the value of the attribute.
+  ///
+  /// When returning your response, you can include data you need to persist during
+  /// the session in the [AlexaResponseBody.sessionAttributes] property. The attributes you provide are
+  /// then passed back to your skill on the next request.
   Map<String, dynamic> attributes;
+
+  /// An object containing an application ID. This is used to verify that the request
+  /// was intended for your service:
+  ///
+  /// This information is also available in the [AlexaContext].[AlexaSystem.application] property.
+  ///
+  /// To see the application ID for your skill, navigate to the list of skills and click the
+  /// **View Skill ID** link for the skill.
   _AlexaSessionApplication application;
+
+  /// An object that describes the user making the request.
+  ///
+  /// Note: Normally, disabling and re-enabling a skill generates a new identifier.
+  /// However, if the skill offers consumable purchases, the [AlexaUser.userId] is not reset.
   _AlexaUser user;
 }
 
 @_alexaSerializable
 class _AlexaSessionApplication {
+  /// A [String] representing the appliation ID for your skill.
   String applicationId;
 }
 
 @_alexaSerializable
 class _AlexaUser {
+  /// A [String] that represents a unique identifier for the user who made the
+  /// request.
+  ///
+  /// The length of this identifier can vary, but is never more than 255 characters.
+  /// The [userId] is automatically generated when a user enables the skill in the Alexa app.
   String userId;
+
+  /// A token identifying the user in another system. This is only provided if the user has
+  /// successfully linked their account.
   String accessToken;
+
+  /// Contains a [AlexaPermissions.consentToken] allowing the skill access to information
+  /// that the customer has consented to provide, such as address information. Note that
+  /// the [AlexaPermissions.consentToken] is deprecated. Use the apiAccessToken available
+  /// in the context object to determine the
+  /// user's permissions.
   _AlexaPermissions permissions;
 }
 
 @_alexaSerializable
 class _AlexaPermissions {
+  /// A [String] allowing the skill access to information that the customer has consented
+  /// to provide, such as address information. Note that the [consentToken]
+  /// is deprecated.
   String consentToken;
 }
 
 @_alexaSerializable
 class _AlexaContext {
+  /// A system object that provides information about the current state of the Alexa
+  /// service and the device interacting with your skill.
   @HasAlias('System')
   _AlexaSystem system;
+
+  /// An object providing the current state for the [AlexaAudioPlayer] interface.
+  ///
+  /// Note that [audioPlayer] is included on all customer-initiated requests (such as
+  /// requests made by voice or using a remote control), but includes the details about
+  /// the playback ([AlexaAudioPlayer.token] and [AlexaAudioPlayer.offsetInMilliseconds])
+  /// only when sent to a skill that was most recently playing audio.
   @HasAlias('AudioPlayer')
   _AlexaAudioPlayer audioPlayer;
 }
 
 @_alexaSerializable
 class _AlexaSystem {
+  /// A [String] containing a token that can be used to access Alexa-specific APIs.
+  /// This token encapsulates:
+  ///
+  /// * Any permissions the user has consented to, such as permission to access the user's
+  /// address with the Device Location API.
+  /// * Access to other Alexa-specific APIs, such as the Progressive Response API
+  ///
+  /// This token is included in all requests sent to your skill. When using this token
+  /// to access an API that requires permissions, your skill should call the API and check
+  /// the return code.
+  /// If a `403` (access denied) code is returned, your skill can then take appropriate
+  /// actions to request the permissions from the user.
   String apiAccessToken;
+
+  /// A string that references the correct base URI to refer to by region, for use with
+  /// APIs such as the Device Location API and Progressive Response API.
   String apiEndpoint;
+
+  /// An object containing an application ID. This is used to verify that the request
+  /// was intended for your service:
+  ///
+  /// This information is also available in the [AlexaSession.application] property for
+  /// [AlexaCanFulfillIntentRequest], [AlexaLaunchRequest], [AlexaIntentRequest], and
+  /// [AlexaSessionEndedRequest] types.
   _AlexaSessionApplication application;
+
+  /// An object providing information about the device used to send the request.
+  _AlexaDevice device;
+
+  /// An object that describes the user making the request.
   _AlexaUser user;
+
+  /// A string that references the correct base URI to refer to by region,
+  /// for use with APIs such as the Device Location API and Progressive Response API.
   Uri get apiEndpointUri =>
       apiEndpoint == null ? null : Uri.tryParse(apiEndpoint);
 }
 
 @_alexaSerializable
 class _AlexaDevice {
+  /// The [deviceId] property uniquely identifies the device.
   String deviceId;
+
+  /// The [supportedInterfaces] property lists each interface that the device supports.
+  /// For example, if [supportedInterfaces] includes `AudioPlayer {}`, then you know that
+  /// the device supports streaming audio using the `AudioPlayer` interface.
   List<String> supportedInterfaces;
 }
 
 @_alexaSerializable
 class _AlexaAudioPlayer {
+  /// An opaque token that represents the audio stream described by this [AlexaAudioPlayer].
+  /// You provide this token when sending the `Play` directive. This is only included in the
+  /// [AlexaAudioPlayer] when your skill was the skill most recently playing audio on
+  /// the device.
   String token;
+
+  /// Identifies a track's offset in milliseconds at the time the request was sent.
+  /// This is `0` if the track is at the beginning. This is only included in the
+  /// [AlexaAudioPlayer] object when your skill was the skill most recently playing
+  /// audio on the device.
   int offsetInMilliseconds;
+
+  /// Indicates the last known state of audio playback.
+  ///
+  /// See [AlexaPlayerActivity].
   String playerActivity;
+
+  /// Identifies a track's offset at the time the request was sent.
+  ///
+  /// This is `0` if the track is at the beginning. See [offsetInMilliseconds].
   Duration get offset => Duration(milliseconds: offsetInMilliseconds);
 }
 

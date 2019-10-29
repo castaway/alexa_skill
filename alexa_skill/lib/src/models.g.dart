@@ -703,18 +703,46 @@ class AlexaSession extends _AlexaSession {
       this.user})
       : this.attributes = Map.unmodifiable(attributes ?? {});
 
+  /// A boolean value indicating whether this is a new session.
+  ///
+  /// Returns `true` for a new session or `false` for an existing session.
   @override
   bool isNew;
 
+  /// A string that represents a unique identifier per a user's active session.
+  ///
+  /// Note: A [sessionId] is consistent for multiple subsequent requests for a user
+  /// and session. If the session ends for a user, then a new unique [sessionId] value
+  /// is provided for subsequent requests for the same user.
   @override
   String sessionId;
 
+  /// A map of key-value pairs. The attributes map is empty for requests where a new
+  /// session has started with the property new set to true.
+  ///
+  /// The key is a string that represents the name of the attribute.
+  /// The value is an object that represents the value of the attribute.
+  ///
+  /// When returning your response, you can include data you need to persist during
+  /// the session in the [AlexaResponseBody.sessionAttributes] property. The attributes you provide are
+  /// then passed back to your skill on the next request.
   @override
   Map<String, dynamic> attributes;
 
+  /// An object containing an application ID. This is used to verify that the request
+  /// was intended for your service:
+  ///
+  /// This information is also available in the [AlexaContext].[AlexaSystem.application] property.
+  ///
+  /// To see the application ID for your skill, navigate to the list of skills and click the
+  /// **View Skill ID** link for the skill.
   @override
   _AlexaSessionApplication application;
 
+  /// An object that describes the user making the request.
+  ///
+  /// Note: Normally, disabling and re-enabling a skill generates a new identifier.
+  /// However, if the skill offers consumable purchases, the [AlexaUser.userId] is not reset.
   @override
   _AlexaUser user;
 
@@ -762,6 +790,7 @@ class AlexaSession extends _AlexaSession {
 class AlexaSessionApplication extends _AlexaSessionApplication {
   AlexaSessionApplication({this.applicationId});
 
+  /// A [String] representing the appliation ID for your skill.
   @override
   String applicationId;
 
@@ -794,12 +823,24 @@ class AlexaSessionApplication extends _AlexaSessionApplication {
 class AlexaUser extends _AlexaUser {
   AlexaUser({this.userId, this.accessToken, this.permissions});
 
+  /// A [String] that represents a unique identifier for the user who made the
+  /// request.
+  ///
+  /// The length of this identifier can vary, but is never more than 255 characters.
+  /// The [userId] is automatically generated when a user enables the skill in the Alexa app.
   @override
   String userId;
 
+  /// A token identifying the user in another system. This is only provided if the user has
+  /// successfully linked their account.
   @override
   String accessToken;
 
+  /// Contains a [AlexaPermissions.consentToken] allowing the skill access to information
+  /// that the customer has consented to provide, such as address information. Note that
+  /// the [AlexaPermissions.consentToken] is deprecated. Use the apiAccessToken available
+  /// in the context object to determine the
+  /// user's permissions.
   @override
   _AlexaPermissions permissions;
 
@@ -837,6 +878,9 @@ class AlexaUser extends _AlexaUser {
 class AlexaPermissions extends _AlexaPermissions {
   AlexaPermissions({this.consentToken});
 
+  /// A [String] allowing the skill access to information that the customer has consented
+  /// to provide, such as address information. Note that the [consentToken]
+  /// is deprecated.
   @override
   String consentToken;
 
@@ -867,9 +911,17 @@ class AlexaPermissions extends _AlexaPermissions {
 class AlexaContext extends _AlexaContext {
   AlexaContext({this.system, this.audioPlayer});
 
+  /// A system object that provides information about the current state of the Alexa
+  /// service and the device interacting with your skill.
   @override
   _AlexaSystem system;
 
+  /// An object providing the current state for the [AlexaAudioPlayer] interface.
+  ///
+  /// Note that [audioPlayer] is included on all customer-initiated requests (such as
+  /// requests made by voice or using a remote control), but includes the details about
+  /// the playback ([AlexaAudioPlayer.token] and [AlexaAudioPlayer.offsetInMilliseconds])
+  /// only when sent to a skill that was most recently playing audio.
   @override
   _AlexaAudioPlayer audioPlayer;
 
@@ -903,17 +955,46 @@ class AlexaContext extends _AlexaContext {
 @generatedSerializable
 class AlexaSystem extends _AlexaSystem {
   AlexaSystem(
-      {this.apiAccessToken, this.apiEndpoint, this.application, this.user});
+      {this.apiAccessToken,
+      this.apiEndpoint,
+      this.application,
+      this.device,
+      this.user});
 
+  /// A [String] containing a token that can be used to access Alexa-specific APIs.
+  /// This token encapsulates:
+  ///
+  /// * Any permissions the user has consented to, such as permission to access the user's
+  /// address with the Device Location API.
+  /// * Access to other Alexa-specific APIs, such as the Progressive Response API
+  ///
+  /// This token is included in all requests sent to your skill. When using this token
+  /// to access an API that requires permissions, your skill should call the API and check
+  /// the return code.
+  /// If a `403` (access denied) code is returned, your skill can then take appropriate
+  /// actions to request the permissions from the user.
   @override
   String apiAccessToken;
 
+  /// A string that references the correct base URI to refer to by region, for use with
+  /// APIs such as the Device Location API and Progressive Response API.
   @override
   String apiEndpoint;
 
+  /// An object containing an application ID. This is used to verify that the request
+  /// was intended for your service:
+  ///
+  /// This information is also available in the [AlexaSession.application] property for
+  /// [AlexaCanFulfillIntentRequest], [AlexaLaunchRequest], [AlexaIntentRequest], and
+  /// [AlexaSessionEndedRequest] types.
   @override
   _AlexaSessionApplication application;
 
+  /// An object providing information about the device used to send the request.
+  @override
+  _AlexaDevice device;
+
+  /// An object that describes the user making the request.
   @override
   _AlexaUser user;
 
@@ -921,11 +1002,13 @@ class AlexaSystem extends _AlexaSystem {
       {String apiAccessToken,
       String apiEndpoint,
       _AlexaSessionApplication application,
+      _AlexaDevice device,
       _AlexaUser user}) {
     return AlexaSystem(
         apiAccessToken: apiAccessToken ?? this.apiAccessToken,
         apiEndpoint: apiEndpoint ?? this.apiEndpoint,
         application: application ?? this.application,
+        device: device ?? this.device,
         user: user ?? this.user);
   }
 
@@ -934,17 +1017,19 @@ class AlexaSystem extends _AlexaSystem {
         other.apiAccessToken == apiAccessToken &&
         other.apiEndpoint == apiEndpoint &&
         other.application == application &&
+        other.device == device &&
         other.user == user;
   }
 
   @override
   int get hashCode {
-    return hashObjects([apiAccessToken, apiEndpoint, application, user]);
+    return hashObjects(
+        [apiAccessToken, apiEndpoint, application, device, user]);
   }
 
   @override
   String toString() {
-    return "AlexaSystem(apiAccessToken=$apiAccessToken, apiEndpoint=$apiEndpoint, application=$application, user=$user)";
+    return "AlexaSystem(apiAccessToken=$apiAccessToken, apiEndpoint=$apiEndpoint, application=$application, device=$device, user=$user)";
   }
 
   Map<String, dynamic> toJson() {
@@ -957,9 +1042,13 @@ class AlexaDevice extends _AlexaDevice {
   AlexaDevice({this.deviceId, List<String> supportedInterfaces})
       : this.supportedInterfaces = List.unmodifiable(supportedInterfaces ?? []);
 
+  /// The [deviceId] property uniquely identifies the device.
   @override
   String deviceId;
 
+  /// The [supportedInterfaces] property lists each interface that the device supports.
+  /// For example, if [supportedInterfaces] includes `AudioPlayer {}`, then you know that
+  /// the device supports streaming audio using the `AudioPlayer` interface.
   @override
   List<String> supportedInterfaces;
 
@@ -996,12 +1085,23 @@ class AlexaAudioPlayer extends _AlexaAudioPlayer {
   AlexaAudioPlayer(
       {this.token, this.offsetInMilliseconds, this.playerActivity});
 
+  /// An opaque token that represents the audio stream described by this [AlexaAudioPlayer].
+  /// You provide this token when sending the `Play` directive. This is only included in the
+  /// [AlexaAudioPlayer] when your skill was the skill most recently playing audio on
+  /// the device.
   @override
   String token;
 
+  /// Identifies a track's offset in milliseconds at the time the request was sent.
+  /// This is `0` if the track is at the beginning. This is only included in the
+  /// [AlexaAudioPlayer] object when your skill was the skill most recently playing
+  /// audio on the device.
   @override
   int offsetInMilliseconds;
 
+  /// Indicates the last known state of audio playback.
+  ///
+  /// See [AlexaPlayerActivity].
   @override
   String playerActivity;
 
@@ -2483,6 +2583,9 @@ class AlexaSystemSerializer extends Codec<AlexaSystem, Map> {
             ? AlexaSessionApplicationSerializer.fromMap(
                 map['application'] as Map)
             : null,
+        device: map['device'] != null
+            ? AlexaDeviceSerializer.fromMap(map['device'] as Map)
+            : null,
         user: map['user'] != null
             ? AlexaUserSerializer.fromMap(map['user'] as Map)
             : null);
@@ -2496,6 +2599,7 @@ class AlexaSystemSerializer extends Codec<AlexaSystem, Map> {
       'apiAccessToken': model.apiAccessToken,
       'apiEndpoint': model.apiEndpoint,
       'application': AlexaSessionApplicationSerializer.toMap(model.application),
+      'device': AlexaDeviceSerializer.toMap(model.device),
       'user': AlexaUserSerializer.toMap(model.user)
     };
   }
@@ -2506,6 +2610,7 @@ abstract class AlexaSystemFields {
     apiAccessToken,
     apiEndpoint,
     application,
+    device,
     user
   ];
 
@@ -2514,6 +2619,8 @@ abstract class AlexaSystemFields {
   static const String apiEndpoint = 'apiEndpoint';
 
   static const String application = 'application';
+
+  static const String device = 'device';
 
   static const String user = 'user';
 }
