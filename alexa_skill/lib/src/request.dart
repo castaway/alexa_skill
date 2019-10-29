@@ -14,22 +14,54 @@ class _AlexaRequestBody {
   String get requestType =>
       request == null ? null : request['type']?.toString();
 
+  /// Attempts to deserialize the plain [request] into a concrete
+  /// [AlexaRequest] type. If the type is unrecognized, `null` will
+  /// be returned, and you will need to read the plain [request] manually.
+  AlexaRequest get requestObject {
+    switch (requestType) {
+      case AlexaRequestType.launchRequest:
+        return launchRequest;
+      case AlexaRequestType.canFulfillIntentRequest:
+        return canFulfillIntentRequest;
+      case AlexaRequestType.intentRequest:
+        return intentRequest;
+      case AlexaRequestType.sessionEndedRequest:
+        return sessionEndedRequest;
+      default:
+        return null;
+    }
+  }
+
+  /// Coerces the [requestObject] as a [LaunchRequest].
+  ///
+  /// Returns `null` if [requestObject] is `null`.
   LaunchRequest get launchRequest =>
       request == null ? null : launchRequestSerializer.decode(request);
 
+  /// Coerces the [requestObject] as a [CanFulfillIntentRequest].
+  ///
+  /// Returns `null` if [requestObject] is `null`.
   CanFulfillIntentRequest get canFulfillIntentRequest => request == null
       ? null
       : canFulfillIntentRequestSerializer.decode(request);
 
+  /// Coerces the [requestObject] as an [IntentRequest].
+  ///
+  /// Returns `null` if [requestObject] is `null`.
   IntentRequest get intentRequest =>
       request == null ? null : intentRequestSerializer.decode(request);
 
+  /// Coerces the [requestObject] as a [SessionEndedRequest].
+  ///
+  /// Returns `null` if [requestObject] is `null`.
   SessionEndedRequest get sessionEndedRequest =>
       request == null ? null : sessionEndedRequestSerializer.decode(request);
 }
 
+/// A [LaunchRequest] is an object that represents that a user made a request to an Alexa skill,
+/// but did not provide a specific intent.
 @alexaSerializable
-class _LaunchRequest extends _AlexaRequest {
+class _LaunchRequest extends AlexaRequest {
   /// Represents a unique identifier for the specific request.
   String requestId;
 
@@ -46,13 +78,13 @@ class _LaunchRequest extends _AlexaRequest {
 }
 
 @alexaSerializable
-class _CanFulfillIntentRequest extends _AlexaRequest {}
+class _CanFulfillIntentRequest extends AlexaRequest {}
 
 @alexaSerializable
-class _IntentRequest extends _AlexaRequest {}
+class _IntentRequest extends AlexaRequest {}
 
 @alexaSerializable
-class _SessionEndedRequest extends _AlexaRequest {}
+class _SessionEndedRequest extends AlexaRequest {}
 
 @alexaSerializable
 class _AlexaSession {
@@ -114,7 +146,7 @@ class _AlexaAudioPlayer {
 }
 
 /// Base class for standard Alexa request types.
-abstract class _AlexaRequest {
+abstract class AlexaRequest {
   /// Describes the request type. See [AlexaRequestType].
   String type;
 

@@ -28,4 +28,7 @@ abstract class AlexaPlayBehavior {
 
 abstract class AlexaRequestType {
   static const String launchRequest = 'LaunchRequest';
+  static const String canFulfillIntentRequest = 'CanFulfillIntentRequest';
+  static const String intentRequest = 'IntentRequest';
+  static const String sessionEndedRequest = 'SessionEndedRequest';
 }
