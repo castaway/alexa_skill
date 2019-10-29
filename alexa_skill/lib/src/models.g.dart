@@ -205,8 +205,9 @@ class AlexaCanFulfillIntentRequest extends _AlexaCanFulfillIntentRequest {
 }
 
 @generatedSerializable
-class AlexaSlot extends _AlexaSlot {
-  AlexaSlot({this.name, this.value, this.confirmationStatus, this.resolutions});
+class AlexaRequestSlot extends _AlexaRequestSlot {
+  AlexaRequestSlot(
+      {this.name, this.value, this.confirmationStatus, this.resolutions});
 
   /// A string that represents the name of the slot.
   @override
@@ -219,7 +220,9 @@ class AlexaSlot extends _AlexaSlot {
   String value;
 
   /// An enumeration indicating whether the user has explicitly
-  /// confirmed or denied the value of this slot. Possible values:
+  /// confirmed or denied the value of this slot.
+  ///
+  /// Possible values are enumerated in [AlexaConfirmationStatus].
   @override
   String confirmationStatus;
 
@@ -233,12 +236,12 @@ class AlexaSlot extends _AlexaSlot {
   @override
   _AlexaResolutions resolutions;
 
-  AlexaSlot copyWith(
+  AlexaRequestSlot copyWith(
       {String name,
       String value,
       String confirmationStatus,
       _AlexaResolutions resolutions}) {
-    return AlexaSlot(
+    return AlexaRequestSlot(
         name: name ?? this.name,
         value: value ?? this.value,
         confirmationStatus: confirmationStatus ?? this.confirmationStatus,
@@ -246,7 +249,7 @@ class AlexaSlot extends _AlexaSlot {
   }
 
   bool operator ==(other) {
-    return other is _AlexaSlot &&
+    return other is _AlexaRequestSlot &&
         other.name == name &&
         other.value == value &&
         other.confirmationStatus == confirmationStatus &&
@@ -260,11 +263,11 @@ class AlexaSlot extends _AlexaSlot {
 
   @override
   String toString() {
-    return "AlexaSlot(name=$name, value=$value, confirmationStatus=$confirmationStatus, resolutions=$resolutions)";
+    return "AlexaRequestSlot(name=$name, value=$value, confirmationStatus=$confirmationStatus, resolutions=$resolutions)";
   }
 
   Map<String, dynamic> toJson() {
-    return AlexaSlotSerializer.toMap(this);
+    return AlexaRequestSlotSerializer.toMap(this);
   }
 }
 
@@ -528,7 +531,9 @@ class AlexaIntentRequest extends _AlexaIntentRequest {
 @generatedSerializable
 class AlexaIntent extends _AlexaIntent {
   AlexaIntent(
-      {this.name, this.confirmationStatus, Map<String, _AlexaSlot> slots})
+      {this.name,
+      this.confirmationStatus,
+      Map<String, _AlexaRequestSlot> slots})
       : this.slots = Map.unmodifiable(slots ?? {});
 
   /// A string representing the name of the intent.
@@ -543,10 +548,12 @@ class AlexaIntent extends _AlexaIntent {
   /// A map of key-value pairs that further describes what the user meant
   /// based on a predefined intent schema. The map can be empty.
   @override
-  Map<String, _AlexaSlot> slots;
+  Map<String, _AlexaRequestSlot> slots;
 
   AlexaIntent copyWith(
-      {String name, String confirmationStatus, Map<String, _AlexaSlot> slots}) {
+      {String name,
+      String confirmationStatus,
+      Map<String, _AlexaRequestSlot> slots}) {
     return AlexaIntent(
         name: name ?? this.name,
         confirmationStatus: confirmationStatus ?? this.confirmationStatus,
@@ -557,9 +564,9 @@ class AlexaIntent extends _AlexaIntent {
     return other is _AlexaIntent &&
         other.name == name &&
         other.confirmationStatus == confirmationStatus &&
-        MapEquality<String, _AlexaSlot>(
+        MapEquality<String, _AlexaRequestSlot>(
                 keys: DefaultEquality<String>(),
-                values: DefaultEquality<_AlexaSlot>())
+                values: DefaultEquality<_AlexaRequestSlot>())
             .equals(other.slots, slots);
   }
 
@@ -1143,12 +1150,16 @@ class AlexaResponseBody extends _AlexaResponseBody {
       this.response})
       : this.sessionAttributes = Map.unmodifiable(sessionAttributes ?? {});
 
+  /// The version specifier for the response.
   @override
   String version;
 
+  /// A map of key-value pairs to persist in the session.
   @override
   Map<String, dynamic> sessionAttributes;
 
+  /// A response object that defines what to render to the user and whether
+  /// to end the current session.
   @override
   _AlexaResponse response;
 
@@ -1192,37 +1203,68 @@ class AlexaResponse extends _AlexaResponse {
       {this.outputSpeech,
       this.card,
       this.reprompt,
-      List<Map<String, dynamic>> directives,
-      this.shouldEndSession})
+      this.shouldEndSession,
+      List<dynamic> directives,
+      this.canFulfillIntent})
       : this.directives = List.unmodifiable(directives ?? []);
 
+  /// The object containing the speech to render to the user.
   @override
   _AlexaOutputSpeech outputSpeech;
 
+  /// The object containing a card to render to the Amazon Alexa App.
   @override
   _AlexaCard card;
 
+  /// The object containing the outputSpeech to use if a re-prompt is necessary.
+  ///
+  /// This is used if your service keeps the session open after sending the response
+  /// ([shouldEndSession] is `false`), but the user does not respond with anything
+  /// that maps to an intent defined in your voice interface while the microphone is
+  /// open. The user has a few seconds to respond to the reprompt before Alexa closes the session.
+  ///
+  /// If this is not set, the user is not re-prompted.
   @override
   _AlexaReprompt reprompt;
 
-  @override
-  List<Map<String, dynamic>> directives;
-
+  /// A boolean value that indicates what should happen after Alexa speaks the response:
+  ///
+  /// * `true`: The session ends.
+  /// * `false`: Alexa opens the microphone for a few seconds to listen for the user's
+  /// response. When you use false, include a reprompt to give the user a second chance to respond.
+  /// * `null` / undefined: Behavior depends on the type of device and the content of the
+  /// response.
+  ///
+  /// Responses to `AMAZON.StopIntent` must use `true` or `null`.
   @override
   bool shouldEndSession;
+
+  /// An array of directives specifying device-level actions to take using a particular
+  /// interface, such as the `AudioPlayer` interface for streaming audio.
+  @override
+  List<dynamic> directives;
+
+  /// When your skill receives an [AlexaCanFulfillIntentRequest], it is expected to
+  /// respond with a [AlexaCanFulfillIntent] object that contains the mandatory field
+  /// [AlexaCanFulfillIntent.canFulfill] for the intent, and two optional fields per
+  /// slot– [AlexaResponseSlot.canUnderstand] and [AlexaResponseSlot.canFulfill].
+  @override
+  _AlexaCanFulfillIntent canFulfillIntent;
 
   AlexaResponse copyWith(
       {_AlexaOutputSpeech outputSpeech,
       _AlexaCard card,
       _AlexaReprompt reprompt,
-      List<Map<String, dynamic>> directives,
-      bool shouldEndSession}) {
+      bool shouldEndSession,
+      List<dynamic> directives,
+      _AlexaCanFulfillIntent canFulfillIntent}) {
     return AlexaResponse(
         outputSpeech: outputSpeech ?? this.outputSpeech,
         card: card ?? this.card,
         reprompt: reprompt ?? this.reprompt,
+        shouldEndSession: shouldEndSession ?? this.shouldEndSession,
         directives: directives ?? this.directives,
-        shouldEndSession: shouldEndSession ?? this.shouldEndSession);
+        canFulfillIntent: canFulfillIntent ?? this.canFulfillIntent);
   }
 
   bool operator ==(other) {
@@ -1230,21 +1272,27 @@ class AlexaResponse extends _AlexaResponse {
         other.outputSpeech == outputSpeech &&
         other.card == card &&
         other.reprompt == reprompt &&
-        ListEquality<Map>(MapEquality<String, dynamic>(
-                keys: DefaultEquality<String>(), values: DefaultEquality()))
+        other.shouldEndSession == shouldEndSession &&
+        ListEquality<dynamic>(DefaultEquality())
             .equals(other.directives, directives) &&
-        other.shouldEndSession == shouldEndSession;
+        other.canFulfillIntent == canFulfillIntent;
   }
 
   @override
   int get hashCode {
-    return hashObjects(
-        [outputSpeech, card, reprompt, directives, shouldEndSession]);
+    return hashObjects([
+      outputSpeech,
+      card,
+      reprompt,
+      shouldEndSession,
+      directives,
+      canFulfillIntent
+    ]);
   }
 
   @override
   String toString() {
-    return "AlexaResponse(outputSpeech=$outputSpeech, card=$card, reprompt=$reprompt, directives=$directives, shouldEndSession=$shouldEndSession)";
+    return "AlexaResponse(outputSpeech=$outputSpeech, card=$card, reprompt=$reprompt, shouldEndSession=$shouldEndSession, directives=$directives, canFulfillIntent=$canFulfillIntent)";
   }
 
   Map<String, dynamic> toJson() {
@@ -1254,33 +1302,36 @@ class AlexaResponse extends _AlexaResponse {
 
 @generatedSerializable
 class AlexaOutputSpeech extends _AlexaOutputSpeech {
-  AlexaOutputSpeech(
-      {this.type, this.title, this.text, this.ssml, this.playBehavior});
+  AlexaOutputSpeech({this.type, this.text, this.ssml, this.playBehavior});
 
+  /// A string containing the type of output speech to render.
+  ///
+  /// Valid types are enumerated in [AlexaOutputSpeechType].
   @override
   String type;
 
-  @override
-  String title;
-
+  /// A string containing the speech to render to the user.
+  ///
+  /// Use this when [type] is [AlexaOutputSpeechType.plainText].
   @override
   String text;
 
+  /// A string containing text marked up with SSML to render to the user.
+  ///
+  /// Use this when type is [AlexaOutputSpeechType.ssml].
   @override
   String ssml;
 
+  /// A string that determines the queuing and playback of this output speech.
+  ///
+  /// Valid values are enumerated in [AlexaPlayBehavior].
   @override
   String playBehavior;
 
   AlexaOutputSpeech copyWith(
-      {String type,
-      String title,
-      String text,
-      String ssml,
-      String playBehavior}) {
+      {String type, String text, String ssml, String playBehavior}) {
     return AlexaOutputSpeech(
         type: type ?? this.type,
-        title: title ?? this.title,
         text: text ?? this.text,
         ssml: ssml ?? this.ssml,
         playBehavior: playBehavior ?? this.playBehavior);
@@ -1289,7 +1340,6 @@ class AlexaOutputSpeech extends _AlexaOutputSpeech {
   bool operator ==(other) {
     return other is _AlexaOutputSpeech &&
         other.type == type &&
-        other.title == title &&
         other.text == text &&
         other.ssml == ssml &&
         other.playBehavior == playBehavior;
@@ -1297,12 +1347,12 @@ class AlexaOutputSpeech extends _AlexaOutputSpeech {
 
   @override
   int get hashCode {
-    return hashObjects([type, title, text, ssml, playBehavior]);
+    return hashObjects([type, text, ssml, playBehavior]);
   }
 
   @override
   String toString() {
-    return "AlexaOutputSpeech(type=$type, title=$title, text=$text, ssml=$ssml, playBehavior=$playBehavior)";
+    return "AlexaOutputSpeech(type=$type, text=$text, ssml=$ssml, playBehavior=$playBehavior)";
   }
 
   Map<String, dynamic> toJson() {
@@ -1314,18 +1364,37 @@ class AlexaOutputSpeech extends _AlexaOutputSpeech {
 class AlexaCard extends _AlexaCard {
   AlexaCard({this.type, this.title, this.content, this.text, this.image});
 
+  /// A string describing the type of card to render.
+  ///
+  /// Valid types are enumerated in [AlexaCardType].
   @override
   String type;
 
+  /// A string containing the title of the card. (not applicable for cards
+  /// of type [AlexaCardType.linkAccount]).
   @override
   String title;
 
+  /// A string containing the contents of a [AlexaCardType.simple] card (not
+  /// applicable for cards of type [AlexaCardType.standard] or
+  /// [AlexaCardType.linkAccount]).
+  ///
+  /// Tip: To include line breaks, use either \r\n or \n within the content of the card.
   @override
   String content;
 
+  /// A string containing the contents of a [AlexaCardType.standard] card (not
+  /// applicable for cards of type [AlexaCardType.simple] or
+  /// [AlexaCardType.linkAccount]).
+  ///
+  /// Tip: To include line breaks, use either \r\n or \n within the content of the card.
   @override
   String text;
 
+  /// An image object that specifies the URLs for the image to display on a
+  /// [AlexaCardType.standard] card. Only applicable for [AlexaCardType.standard] cards.
+  ///
+  /// You can provide two URLs, for use on different sized screens.
   @override
   _AlexaCardImage image;
 
@@ -1371,9 +1440,15 @@ class AlexaCard extends _AlexaCard {
 class AlexaCardImage extends _AlexaCardImage {
   AlexaCardImage({this.smallImageUrl, this.largeImageUrl});
 
+  /// Displayed on smaller screens.
+  ///
+  /// Recommended size: `720w x 480h`
   @override
   String smallImageUrl;
 
+  /// Displayed on larger screens.
+  ///
+  /// Recommended size: `1200w x 800h`
   @override
   String largeImageUrl;
 
@@ -1408,6 +1483,8 @@ class AlexaCardImage extends _AlexaCardImage {
 class AlexaReprompt extends _AlexaReprompt {
   AlexaReprompt({this.outputSpeech});
 
+  /// An [AlexaOutputSpeech] object containing the text or SSML to render as
+  /// a re-prompt.
   @override
   _AlexaOutputSpeech outputSpeech;
 
@@ -1435,14 +1512,14 @@ class AlexaReprompt extends _AlexaReprompt {
 }
 
 @generatedSerializable
-class AlexaCanFulfillIntentResponse extends _AlexaCanFulfillIntentResponse {
-  AlexaCanFulfillIntentResponse(
+class AlexaCanFulfillIntent extends _AlexaCanFulfillIntent {
+  AlexaCanFulfillIntent(
       {this.requestId,
       this.type,
       this.locale,
       this.timestamp,
       this.canFulfill,
-      Map<String, _AlexaSlot> slots})
+      Map<String, _AlexaResponseSlot> slots})
       : this.slots = Map.unmodifiable(slots ?? {});
 
   /// Represents a unique identifier for the specific request.
@@ -1473,16 +1550,16 @@ class AlexaCanFulfillIntentResponse extends _AlexaCanFulfillIntentResponse {
   /// the intent, and helps Alexa make better ranking and arbitration
   /// decisions.
   @override
-  Map<String, _AlexaSlot> slots;
+  Map<String, _AlexaResponseSlot> slots;
 
-  AlexaCanFulfillIntentResponse copyWith(
+  AlexaCanFulfillIntent copyWith(
       {String requestId,
       String type,
       String locale,
       String timestamp,
       String canFulfill,
-      Map<String, _AlexaSlot> slots}) {
-    return AlexaCanFulfillIntentResponse(
+      Map<String, _AlexaResponseSlot> slots}) {
+    return AlexaCanFulfillIntent(
         requestId: requestId ?? this.requestId,
         type: type ?? this.type,
         locale: locale ?? this.locale,
@@ -1492,15 +1569,15 @@ class AlexaCanFulfillIntentResponse extends _AlexaCanFulfillIntentResponse {
   }
 
   bool operator ==(other) {
-    return other is _AlexaCanFulfillIntentResponse &&
+    return other is _AlexaCanFulfillIntent &&
         other.requestId == requestId &&
         other.type == type &&
         other.locale == locale &&
         other.timestamp == timestamp &&
         other.canFulfill == canFulfill &&
-        MapEquality<String, _AlexaSlot>(
+        MapEquality<String, _AlexaResponseSlot>(
                 keys: DefaultEquality<String>(),
-                values: DefaultEquality<_AlexaSlot>())
+                values: DefaultEquality<_AlexaResponseSlot>())
             .equals(other.slots, slots);
   }
 
@@ -1511,11 +1588,64 @@ class AlexaCanFulfillIntentResponse extends _AlexaCanFulfillIntentResponse {
 
   @override
   String toString() {
-    return "AlexaCanFulfillIntentResponse(requestId=$requestId, type=$type, locale=$locale, timestamp=$timestamp, canFulfill=$canFulfill, slots=$slots)";
+    return "AlexaCanFulfillIntent(requestId=$requestId, type=$type, locale=$locale, timestamp=$timestamp, canFulfill=$canFulfill, slots=$slots)";
   }
 
   Map<String, dynamic> toJson() {
-    return AlexaCanFulfillIntentResponseSerializer.toMap(this);
+    return AlexaCanFulfillIntentSerializer.toMap(this);
+  }
+}
+
+@generatedSerializable
+class AlexaResponseSlot extends _AlexaResponseSlot {
+  AlexaResponseSlot({this.canUnderstand, this.canFulfill});
+
+  /// Indicates whether your skill understands the slot value.
+  ///
+  /// Your skill logic needs to determine whether there is a match and the
+  /// quality of the match. For example, the skill might look up values
+  /// from a list that you maintain.
+  ///
+  /// See [AlexaConfirmationStatus].
+  @override
+  String canUnderstand;
+
+  /// This field indicates whether your skill can fulfill the relevant action
+  /// for the slot that has been partially or fully identified.
+  ///
+  /// The definition
+  /// of fulfilling the slot is dependent on your skill, and your skill service
+  /// is required to have logic in place to determine whether a slot value can
+  /// be fulfilled in the context of your skill or not.
+  ///
+  /// See [AlexaConfirmationStatus].
+  @override
+  String canFulfill;
+
+  AlexaResponseSlot copyWith({String canUnderstand, String canFulfill}) {
+    return AlexaResponseSlot(
+        canUnderstand: canUnderstand ?? this.canUnderstand,
+        canFulfill: canFulfill ?? this.canFulfill);
+  }
+
+  bool operator ==(other) {
+    return other is _AlexaResponseSlot &&
+        other.canUnderstand == canUnderstand &&
+        other.canFulfill == canFulfill;
+  }
+
+  @override
+  int get hashCode {
+    return hashObjects([canUnderstand, canFulfill]);
+  }
+
+  @override
+  String toString() {
+    return "AlexaResponseSlot(canUnderstand=$canUnderstand, canFulfill=$canFulfill)";
+  }
+
+  Map<String, dynamic> toJson() {
+    return AlexaResponseSlotSerializer.toMap(this);
   }
 }
 
@@ -1731,31 +1861,33 @@ abstract class AlexaCanFulfillIntentRequestFields {
   static const String intent = 'intent';
 }
 
-const AlexaSlotSerializer alexaSlotSerializer = AlexaSlotSerializer();
+const AlexaRequestSlotSerializer alexaRequestSlotSerializer =
+    AlexaRequestSlotSerializer();
 
-class AlexaSlotEncoder extends Converter<AlexaSlot, Map> {
-  const AlexaSlotEncoder();
+class AlexaRequestSlotEncoder extends Converter<AlexaRequestSlot, Map> {
+  const AlexaRequestSlotEncoder();
 
   @override
-  Map convert(AlexaSlot model) => AlexaSlotSerializer.toMap(model);
+  Map convert(AlexaRequestSlot model) =>
+      AlexaRequestSlotSerializer.toMap(model);
 }
 
-class AlexaSlotDecoder extends Converter<Map, AlexaSlot> {
-  const AlexaSlotDecoder();
+class AlexaRequestSlotDecoder extends Converter<Map, AlexaRequestSlot> {
+  const AlexaRequestSlotDecoder();
 
   @override
-  AlexaSlot convert(Map map) => AlexaSlotSerializer.fromMap(map);
+  AlexaRequestSlot convert(Map map) => AlexaRequestSlotSerializer.fromMap(map);
 }
 
-class AlexaSlotSerializer extends Codec<AlexaSlot, Map> {
-  const AlexaSlotSerializer();
+class AlexaRequestSlotSerializer extends Codec<AlexaRequestSlot, Map> {
+  const AlexaRequestSlotSerializer();
 
   @override
-  get encoder => const AlexaSlotEncoder();
+  get encoder => const AlexaRequestSlotEncoder();
   @override
-  get decoder => const AlexaSlotDecoder();
-  static AlexaSlot fromMap(Map map) {
-    return AlexaSlot(
+  get decoder => const AlexaRequestSlotDecoder();
+  static AlexaRequestSlot fromMap(Map map) {
+    return AlexaRequestSlot(
         name: map['name'] as String,
         value: map['value'] as String,
         confirmationStatus: map['confirmationStatus'] as String,
@@ -1764,7 +1896,7 @@ class AlexaSlotSerializer extends Codec<AlexaSlot, Map> {
             : null);
   }
 
-  static Map<String, dynamic> toMap(_AlexaSlot model) {
+  static Map<String, dynamic> toMap(_AlexaRequestSlot model) {
     if (model == null) {
       return null;
     }
@@ -1777,7 +1909,7 @@ class AlexaSlotSerializer extends Codec<AlexaSlot, Map> {
   }
 }
 
-abstract class AlexaSlotFields {
+abstract class AlexaRequestSlotFields {
   static const List<String> allFields = <String>[
     name,
     value,
@@ -2121,7 +2253,7 @@ class AlexaIntentSerializer extends Codec<AlexaIntent, Map> {
         slots: map['slots'] is Map
             ? Map.unmodifiable((map['slots'] as Map).keys.fold({}, (out, key) {
                 return out
-                  ..[key] = AlexaSlotSerializer.fromMap(
+                  ..[key] = AlexaRequestSlotSerializer.fromMap(
                       ((map['slots'] as Map)[key]) as Map);
               }))
             : null);
@@ -2135,7 +2267,7 @@ class AlexaIntentSerializer extends Codec<AlexaIntent, Map> {
       'name': model.name,
       'confirmationStatus': model.confirmationStatus,
       'slots': model.slots.keys?.fold({}, (map, key) {
-        return map..[key] = AlexaSlotSerializer.toMap(model.slots[key]);
+        return map..[key] = AlexaRequestSlotSerializer.toMap(model.slots[key]);
       })
     };
   }
@@ -2831,12 +2963,14 @@ class AlexaResponseSerializer extends Codec<AlexaResponse, Map> {
         reprompt: map['reprompt'] != null
             ? AlexaRepromptSerializer.fromMap(map['reprompt'] as Map)
             : null,
+        shouldEndSession: map['shouldEndSession'] as bool,
         directives: map['directives'] is Iterable
-            ? (map['directives'] as Iterable)
-                .cast<Map<String, dynamic>>()
-                .toList()
+            ? (map['directives'] as Iterable).cast<dynamic>().toList()
             : null,
-        shouldEndSession: map['shouldEndSession'] as bool);
+        canFulfillIntent: map['canFulfillIntent'] != null
+            ? AlexaCanFulfillIntentSerializer.fromMap(
+                map['canFulfillIntent'] as Map)
+            : null);
   }
 
   static Map<String, dynamic> toMap(_AlexaResponse model) {
@@ -2847,8 +2981,10 @@ class AlexaResponseSerializer extends Codec<AlexaResponse, Map> {
       'outputSpeech': AlexaOutputSpeechSerializer.toMap(model.outputSpeech),
       'card': AlexaCardSerializer.toMap(model.card),
       'reprompt': AlexaRepromptSerializer.toMap(model.reprompt),
+      'shouldEndSession': model.shouldEndSession,
       'directives': model.directives,
-      'shouldEndSession': model.shouldEndSession
+      'canFulfillIntent':
+          AlexaCanFulfillIntentSerializer.toMap(model.canFulfillIntent)
     };
   }
 }
@@ -2858,8 +2994,9 @@ abstract class AlexaResponseFields {
     outputSpeech,
     card,
     reprompt,
+    shouldEndSession,
     directives,
-    shouldEndSession
+    canFulfillIntent
   ];
 
   static const String outputSpeech = 'outputSpeech';
@@ -2868,9 +3005,11 @@ abstract class AlexaResponseFields {
 
   static const String reprompt = 'reprompt';
 
+  static const String shouldEndSession = 'shouldEndSession';
+
   static const String directives = 'directives';
 
-  static const String shouldEndSession = 'shouldEndSession';
+  static const String canFulfillIntent = 'canFulfillIntent';
 }
 
 const AlexaOutputSpeechSerializer alexaOutputSpeechSerializer =
@@ -2902,7 +3041,6 @@ class AlexaOutputSpeechSerializer extends Codec<AlexaOutputSpeech, Map> {
   static AlexaOutputSpeech fromMap(Map map) {
     return AlexaOutputSpeech(
         type: map['type'] as String,
-        title: map['title'] as String,
         text: map['text'] as String,
         ssml: map['ssml'] as String,
         playBehavior: map['playBehavior'] as String);
@@ -2914,7 +3052,6 @@ class AlexaOutputSpeechSerializer extends Codec<AlexaOutputSpeech, Map> {
     }
     return {
       'type': model.type,
-      'title': model.title,
       'text': model.text,
       'ssml': model.ssml,
       'playBehavior': model.playBehavior
@@ -2925,15 +3062,12 @@ class AlexaOutputSpeechSerializer extends Codec<AlexaOutputSpeech, Map> {
 abstract class AlexaOutputSpeechFields {
   static const List<String> allFields = <String>[
     type,
-    title,
     text,
     ssml,
     playBehavior
   ];
 
   static const String type = 'type';
-
-  static const String title = 'title';
 
   static const String text = 'text';
 
@@ -3106,38 +3240,37 @@ abstract class AlexaRepromptFields {
   static const String outputSpeech = 'outputSpeech';
 }
 
-const AlexaCanFulfillIntentResponseSerializer
-    alexaCanFulfillIntentResponseSerializer =
-    AlexaCanFulfillIntentResponseSerializer();
+const AlexaCanFulfillIntentSerializer alexaCanFulfillIntentSerializer =
+    AlexaCanFulfillIntentSerializer();
 
-class AlexaCanFulfillIntentResponseEncoder
-    extends Converter<AlexaCanFulfillIntentResponse, Map> {
-  const AlexaCanFulfillIntentResponseEncoder();
+class AlexaCanFulfillIntentEncoder
+    extends Converter<AlexaCanFulfillIntent, Map> {
+  const AlexaCanFulfillIntentEncoder();
 
   @override
-  Map convert(AlexaCanFulfillIntentResponse model) =>
-      AlexaCanFulfillIntentResponseSerializer.toMap(model);
+  Map convert(AlexaCanFulfillIntent model) =>
+      AlexaCanFulfillIntentSerializer.toMap(model);
 }
 
-class AlexaCanFulfillIntentResponseDecoder
-    extends Converter<Map, AlexaCanFulfillIntentResponse> {
-  const AlexaCanFulfillIntentResponseDecoder();
+class AlexaCanFulfillIntentDecoder
+    extends Converter<Map, AlexaCanFulfillIntent> {
+  const AlexaCanFulfillIntentDecoder();
 
   @override
-  AlexaCanFulfillIntentResponse convert(Map map) =>
-      AlexaCanFulfillIntentResponseSerializer.fromMap(map);
+  AlexaCanFulfillIntent convert(Map map) =>
+      AlexaCanFulfillIntentSerializer.fromMap(map);
 }
 
-class AlexaCanFulfillIntentResponseSerializer
-    extends Codec<AlexaCanFulfillIntentResponse, Map> {
-  const AlexaCanFulfillIntentResponseSerializer();
+class AlexaCanFulfillIntentSerializer
+    extends Codec<AlexaCanFulfillIntent, Map> {
+  const AlexaCanFulfillIntentSerializer();
 
   @override
-  get encoder => const AlexaCanFulfillIntentResponseEncoder();
+  get encoder => const AlexaCanFulfillIntentEncoder();
   @override
-  get decoder => const AlexaCanFulfillIntentResponseDecoder();
-  static AlexaCanFulfillIntentResponse fromMap(Map map) {
-    return AlexaCanFulfillIntentResponse(
+  get decoder => const AlexaCanFulfillIntentDecoder();
+  static AlexaCanFulfillIntent fromMap(Map map) {
+    return AlexaCanFulfillIntent(
         requestId: map['requestId'] as String,
         type: map['type'] as String,
         locale: map['locale'] as String,
@@ -3146,13 +3279,13 @@ class AlexaCanFulfillIntentResponseSerializer
         slots: map['slots'] is Map
             ? Map.unmodifiable((map['slots'] as Map).keys.fold({}, (out, key) {
                 return out
-                  ..[key] = AlexaSlotSerializer.fromMap(
+                  ..[key] = AlexaResponseSlotSerializer.fromMap(
                       ((map['slots'] as Map)[key]) as Map);
               }))
             : null);
   }
 
-  static Map<String, dynamic> toMap(_AlexaCanFulfillIntentResponse model) {
+  static Map<String, dynamic> toMap(_AlexaCanFulfillIntent model) {
     if (model == null) {
       return null;
     }
@@ -3163,13 +3296,13 @@ class AlexaCanFulfillIntentResponseSerializer
       'timestamp': model.timestamp,
       'canFulfill': model.canFulfill,
       'slots': model.slots.keys?.fold({}, (map, key) {
-        return map..[key] = AlexaSlotSerializer.toMap(model.slots[key]);
+        return map..[key] = AlexaResponseSlotSerializer.toMap(model.slots[key]);
       })
     };
   }
 }
 
-abstract class AlexaCanFulfillIntentResponseFields {
+abstract class AlexaCanFulfillIntentFields {
   static const List<String> allFields = <String>[
     requestId,
     type,
@@ -3190,4 +3323,55 @@ abstract class AlexaCanFulfillIntentResponseFields {
   static const String canFulfill = 'canFulfill';
 
   static const String slots = 'slots';
+}
+
+const AlexaResponseSlotSerializer alexaResponseSlotSerializer =
+    AlexaResponseSlotSerializer();
+
+class AlexaResponseSlotEncoder extends Converter<AlexaResponseSlot, Map> {
+  const AlexaResponseSlotEncoder();
+
+  @override
+  Map convert(AlexaResponseSlot model) =>
+      AlexaResponseSlotSerializer.toMap(model);
+}
+
+class AlexaResponseSlotDecoder extends Converter<Map, AlexaResponseSlot> {
+  const AlexaResponseSlotDecoder();
+
+  @override
+  AlexaResponseSlot convert(Map map) =>
+      AlexaResponseSlotSerializer.fromMap(map);
+}
+
+class AlexaResponseSlotSerializer extends Codec<AlexaResponseSlot, Map> {
+  const AlexaResponseSlotSerializer();
+
+  @override
+  get encoder => const AlexaResponseSlotEncoder();
+  @override
+  get decoder => const AlexaResponseSlotDecoder();
+  static AlexaResponseSlot fromMap(Map map) {
+    return AlexaResponseSlot(
+        canUnderstand: map['canUnderstand'] as String,
+        canFulfill: map['canFulfill'] as String);
+  }
+
+  static Map<String, dynamic> toMap(_AlexaResponseSlot model) {
+    if (model == null) {
+      return null;
+    }
+    return {
+      'canUnderstand': model.canUnderstand,
+      'canFulfill': model.canFulfill
+    };
+  }
+}
+
+abstract class AlexaResponseSlotFields {
+  static const List<String> allFields = <String>[canUnderstand, canFulfill];
+
+  static const String canUnderstand = 'canUnderstand';
+
+  static const String canFulfill = 'canFulfill';
 }

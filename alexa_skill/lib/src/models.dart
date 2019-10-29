@@ -124,7 +124,7 @@ class _AlexaCanFulfillIntentRequest extends AlexaRequest {
 }
 
 @_alexaSerializable
-class _AlexaSlot {
+class _AlexaRequestSlot {
   /// A string that represents the name of the slot.
   String name;
 
@@ -134,7 +134,9 @@ class _AlexaSlot {
   String value;
 
   /// An enumeration indicating whether the user has explicitly
-  /// confirmed or denied the value of this slot. Possible values:
+  /// confirmed or denied the value of this slot.
+  /// 
+  /// Possible values are enumerated in [AlexaConfirmationStatus].
   String confirmationStatus;
 
   /// An [AlexaResolutions] object representing the results of resolving the
@@ -215,7 +217,7 @@ class _AlexaIntent {
 
   /// A map of key-value pairs that further describes what the user meant
   /// based on a predefined intent schema. The map can be empty.
-  Map<String, _AlexaSlot> slots;
+  Map<String, _AlexaRequestSlot> slots;
 }
 
 @_alexaSerializable
@@ -434,52 +436,135 @@ abstract class AlexaRequest {
 
 @_alexaSerializable
 class _AlexaResponseBody {
+  /// The version specifier for the response.
   @DefaultsTo('1.0')
   String version;
+
+  /// A map of key-value pairs to persist in the session.
   Map<String, dynamic> sessionAttributes;
+
+  /// A response object that defines what to render to the user and whether
+  /// to end the current session.
   _AlexaResponse response;
 }
 
 @_alexaSerializable
 class _AlexaResponse {
+  /// The object containing the speech to render to the user.
   _AlexaOutputSpeech outputSpeech;
+
+  /// The object containing a card to render to the Amazon Alexa App.
   _AlexaCard card;
+
+  /// The object containing the outputSpeech to use if a re-prompt is necessary.
+  ///
+  /// This is used if your service keeps the session open after sending the response
+  /// ([shouldEndSession] is `false`), but the user does not respond with anything
+  /// that maps to an intent defined in your voice interface while the microphone is
+  /// open. The user has a few seconds to respond to the reprompt before Alexa closes the session.
+  ///
+  /// If this is not set, the user is not re-prompted.
   _AlexaReprompt reprompt;
-  List<Map<String, dynamic>> directives;
+
+  /// A boolean value that indicates what should happen after Alexa speaks the response:
+  ///
+  /// * `true`: The session ends.
+  /// * `false`: Alexa opens the microphone for a few seconds to listen for the user's
+  /// response. When you use false, include a reprompt to give the user a second chance to respond.
+  /// * `null` / undefined: Behavior depends on the type of device and the content of the
+  /// response.
+  ///
+  /// Responses to `AMAZON.StopIntent` must use `true` or `null`.
   bool shouldEndSession;
+
+  /// An array of directives specifying device-level actions to take using a particular
+  /// interface, such as the `AudioPlayer` interface for streaming audio.
+  List directives;
+
+  /// When your skill receives an [AlexaCanFulfillIntentRequest], it is expected to
+  /// respond with a [AlexaCanFulfillIntent] object that contains the mandatory field
+  /// [AlexaCanFulfillIntent.canFulfill] for the intent, and two optional fields per
+  /// slot– [AlexaResponseSlot.canUnderstand] and [AlexaResponseSlot.canFulfill].
+  _AlexaCanFulfillIntent canFulfillIntent;
 }
 
 @_alexaSerializable
 class _AlexaOutputSpeech {
+  /// A string containing the type of output speech to render.
+  ///
+  /// Valid types are enumerated in [AlexaOutputSpeechType].
   String type;
-  String title;
+
+  /// A string containing the speech to render to the user.
+  ///
+  /// Use this when [type] is [AlexaOutputSpeechType.plainText].
   String text;
+
+  /// A string containing text marked up with SSML to render to the user.
+  ///
+  /// Use this when type is [AlexaOutputSpeechType.ssml].
   String ssml;
+
+  /// A string that determines the queuing and playback of this output speech.
+  ///
+  /// Valid values are enumerated in [AlexaPlayBehavior].
   String playBehavior;
 }
 
 @_alexaSerializable
 class _AlexaCard {
+  /// A string describing the type of card to render.
+  ///
+  /// Valid types are enumerated in [AlexaCardType].
   String type;
+
+  /// A string containing the title of the card. (not applicable for cards
+  /// of type [AlexaCardType.linkAccount]).
   String title;
+
+  /// A string containing the contents of a [AlexaCardType.simple] card (not
+  /// applicable for cards of type [AlexaCardType.standard] or
+  /// [AlexaCardType.linkAccount]).
+  ///
+  /// Tip: To include line breaks, use either \r\n or \n within the content of the card.
   String content;
+
+  /// A string containing the contents of a [AlexaCardType.standard] card (not
+  /// applicable for cards of type [AlexaCardType.simple] or
+  /// [AlexaCardType.linkAccount]).
+  ///
+  /// Tip: To include line breaks, use either \r\n or \n within the content of the card.
   String text;
+
+  /// An image object that specifies the URLs for the image to display on a
+  /// [AlexaCardType.standard] card. Only applicable for [AlexaCardType.standard] cards.
+  ///
+  /// You can provide two URLs, for use on different sized screens.
   _AlexaCardImage image;
 }
 
 @_alexaSerializable
 class _AlexaCardImage {
+  /// Displayed on smaller screens.
+  ///
+  /// Recommended size: `720w x 480h`
   String smallImageUrl;
+
+  /// Displayed on larger screens.
+  ///
+  /// Recommended size: `1200w x 800h`
   String largeImageUrl;
 }
 
 @_alexaSerializable
 class _AlexaReprompt {
+  /// An [AlexaOutputSpeech] object containing the text or SSML to render as
+  /// a re-prompt.
   _AlexaOutputSpeech outputSpeech;
 }
 
 @_alexaSerializable
-class _AlexaCanFulfillIntentResponse extends AlexaRequest {
+class _AlexaCanFulfillIntent extends AlexaRequest {
   /// Represents an overall response to whether the skill
   /// can understand and fulfill the intent with detected slots.
   String canFulfill;
@@ -489,5 +574,28 @@ class _AlexaCanFulfillIntentResponse extends AlexaRequest {
   /// the slot. The map supplements the overall canFulfill response for
   /// the intent, and helps Alexa make better ranking and arbitration
   /// decisions.
-  Map<String, _AlexaSlot> slots;
+  Map<String, _AlexaResponseSlot> slots;
+}
+
+@_alexaSerializable
+class _AlexaResponseSlot {
+  /// Indicates whether your skill understands the slot value.
+  ///
+  /// Your skill logic needs to determine whether there is a match and the
+  /// quality of the match. For example, the skill might look up values
+  /// from a list that you maintain.
+  ///
+  /// See [AlexaConfirmationStatus].
+  String canUnderstand;
+
+  /// This field indicates whether your skill can fulfill the relevant action
+  /// for the slot that has been partially or fully identified.
+  ///
+  /// The definition
+  /// of fulfilling the slot is dependent on your skill, and your skill service
+  /// is required to have logic in place to determine whether a slot value can
+  /// be fulfilled in the context of your skill or not.
+  ///
+  /// See [AlexaConfirmationStatus].
+  String canFulfill;
 }

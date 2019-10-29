@@ -6,6 +6,7 @@ import 'package:body_parser/body_parser.dart';
 
 main() async {
   var server = await HttpServer.bind('127.0.0.1', 3000);
+  print('Listening at http://127.0.0.1:3000');
   await for (var request in server) {
     try {
       if (request.method != 'POST' || request.uri.path != '/alexa') {
@@ -15,7 +16,7 @@ main() async {
         var bodyParseResult = await parseBody(request);
         var body = alexaRequestBodySerializer.decode(bodyParseResult.body);
         if (body.requestType != AlexaRequestType.launchRequest) {
-          throw 'Only launch requests are supported in this example.';
+          throw 'Only launch requests are supported in this example; got ${body.requestType}';
         } else {
           var alexaResponse = AlexaResponseBody()
             ..response.outputSpeech = AlexaOutputSpeech(text: 'Hello!');
