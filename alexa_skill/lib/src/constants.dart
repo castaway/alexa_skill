@@ -25,3 +25,7 @@ abstract class AlexaPlayBehavior {
   /// `ENQUEUE`: Add this speech to the end of the queue. Do not interrupt Alexa's current speech.
   static const String enqueue = 'ENQUEUE';
 }
+
+abstract class AlexaRequestType {
+  static const String launchRequest = 'LaunchRequest';
+}

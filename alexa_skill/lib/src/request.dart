@@ -1,4 +1,5 @@
 import 'package:angel_serialize/angel_serialize.dart';
+import 'constants.dart';
 part 'request.g.dart';
 
 const Serializable alexaSerializable = Serializable(autoSnakeCaseNames: false);
@@ -29,8 +30,17 @@ class _AlexaRequestBody {
 
 @alexaSerializable
 class _LaunchRequest extends _AlexaRequest {
+  /// Represents a unique identifier for the specific request.
   String requestId;
+
+  /// Provides the date and time when Alexa sent the request as an ISO 8601 formatted string.
+  /// Used to verify the request when hosting your skill as a web service.
   String timestamp;
+
+  /// Provides the date and time when Alexa sent the request.
+  /// Used to verify the request when hosting your skill as a web service.
+  ///
+  /// The implementation parses the [timestamp], if any.
   DateTime get timestampAsDateTime =>
       timestamp == null ? null : DateTime.tryParse(timestamp);
 }
@@ -103,7 +113,11 @@ class _AlexaAudioPlayer {
   Duration get offset => Duration(milliseconds: offsetInMilliseconds);
 }
 
+/// Base class for standard Alexa request types.
 abstract class _AlexaRequest {
+  /// Describes the request type. See [AlexaRequestType].
   String type;
+
+  /// A string indicating the user's locale. For example: `en-US`.
   String locale;
 }

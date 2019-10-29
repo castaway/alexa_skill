@@ -68,15 +68,20 @@ class AlexaRequestBody extends _AlexaRequestBody {
 class LaunchRequest extends _LaunchRequest {
   LaunchRequest({this.type, this.locale, this.requestId, this.timestamp});
 
+  /// Describes the request type. See [AlexaRequestType].
   @override
   String type;
 
+  /// A string indicating the user's locale. For example: `en-US`.
   @override
   String locale;
 
+  /// Represents a unique identifier for the specific request.
   @override
   String requestId;
 
+  /// Provides the date and time when Alexa sent the request as an ISO 8601 formatted string.
+  /// Used to verify the request when hosting your skill as a web service.
   @override
   String timestamp;
 
@@ -116,9 +121,11 @@ class LaunchRequest extends _LaunchRequest {
 class CanFulfillIntentRequest implements _CanFulfillIntentRequest {
   CanFulfillIntentRequest({this.type, this.locale});
 
+  /// Describes the request type. See [AlexaRequestType].
   @override
   String type;
 
+  /// A string indicating the user's locale. For example: `en-US`.
   @override
   String locale;
 
@@ -152,9 +159,11 @@ class CanFulfillIntentRequest implements _CanFulfillIntentRequest {
 class IntentRequest implements _IntentRequest {
   IntentRequest({this.type, this.locale});
 
+  /// Describes the request type. See [AlexaRequestType].
   @override
   String type;
 
+  /// A string indicating the user's locale. For example: `en-US`.
   @override
   String locale;
 
@@ -188,9 +197,11 @@ class IntentRequest implements _IntentRequest {
 class SessionEndedRequest implements _SessionEndedRequest {
   SessionEndedRequest({this.type, this.locale});
 
+  /// Describes the request type. See [AlexaRequestType].
   @override
   String type;
 
+  /// A string indicating the user's locale. For example: `en-US`.
   @override
   String locale;
 
