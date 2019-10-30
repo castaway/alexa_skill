@@ -1396,14 +1396,14 @@ class AlexaCard extends _AlexaCard {
   ///
   /// You can provide two URLs, for use on different sized screens.
   @override
-  _AlexaCardImage image;
+  _AlexaImage image;
 
   AlexaCard copyWith(
       {String type,
       String title,
       String content,
       String text,
-      _AlexaCardImage image}) {
+      _AlexaImage image}) {
     return AlexaCard(
         type: type ?? this.type,
         title: title ?? this.title,
@@ -1437,8 +1437,8 @@ class AlexaCard extends _AlexaCard {
 }
 
 @generatedSerializable
-class AlexaCardImage extends _AlexaCardImage {
-  AlexaCardImage({this.smallImageUrl, this.largeImageUrl});
+class AlexaImage extends _AlexaImage {
+  AlexaImage({this.smallImageUrl, this.largeImageUrl});
 
   /// Displayed on smaller screens.
   ///
@@ -1452,14 +1452,14 @@ class AlexaCardImage extends _AlexaCardImage {
   @override
   String largeImageUrl;
 
-  AlexaCardImage copyWith({String smallImageUrl, String largeImageUrl}) {
-    return AlexaCardImage(
+  AlexaImage copyWith({String smallImageUrl, String largeImageUrl}) {
+    return AlexaImage(
         smallImageUrl: smallImageUrl ?? this.smallImageUrl,
         largeImageUrl: largeImageUrl ?? this.largeImageUrl);
   }
 
   bool operator ==(other) {
-    return other is _AlexaCardImage &&
+    return other is _AlexaImage &&
         other.smallImageUrl == smallImageUrl &&
         other.largeImageUrl == largeImageUrl;
   }
@@ -1471,11 +1471,11 @@ class AlexaCardImage extends _AlexaCardImage {
 
   @override
   String toString() {
-    return "AlexaCardImage(smallImageUrl=$smallImageUrl, largeImageUrl=$largeImageUrl)";
+    return "AlexaImage(smallImageUrl=$smallImageUrl, largeImageUrl=$largeImageUrl)";
   }
 
   Map<String, dynamic> toJson() {
-    return AlexaCardImageSerializer.toMap(this);
+    return AlexaImageSerializer.toMap(this);
   }
 }
 
@@ -3110,7 +3110,7 @@ class AlexaCardSerializer extends Codec<AlexaCard, Map> {
         content: map['content'] as String,
         text: map['text'] as String,
         image: map['image'] != null
-            ? AlexaCardImageSerializer.fromMap(map['image'] as Map)
+            ? AlexaImageSerializer.fromMap(map['image'] as Map)
             : null);
   }
 
@@ -3123,7 +3123,7 @@ class AlexaCardSerializer extends Codec<AlexaCard, Map> {
       'title': model.title,
       'content': model.content,
       'text': model.text,
-      'image': AlexaCardImageSerializer.toMap(model.image)
+      'image': AlexaImageSerializer.toMap(model.image)
     };
   }
 }
@@ -3148,37 +3148,36 @@ abstract class AlexaCardFields {
   static const String image = 'image';
 }
 
-const AlexaCardImageSerializer alexaCardImageSerializer =
-    AlexaCardImageSerializer();
+const AlexaImageSerializer alexaImageSerializer = AlexaImageSerializer();
 
-class AlexaCardImageEncoder extends Converter<AlexaCardImage, Map> {
-  const AlexaCardImageEncoder();
+class AlexaImageEncoder extends Converter<AlexaImage, Map> {
+  const AlexaImageEncoder();
 
   @override
-  Map convert(AlexaCardImage model) => AlexaCardImageSerializer.toMap(model);
+  Map convert(AlexaImage model) => AlexaImageSerializer.toMap(model);
 }
 
-class AlexaCardImageDecoder extends Converter<Map, AlexaCardImage> {
-  const AlexaCardImageDecoder();
+class AlexaImageDecoder extends Converter<Map, AlexaImage> {
+  const AlexaImageDecoder();
 
   @override
-  AlexaCardImage convert(Map map) => AlexaCardImageSerializer.fromMap(map);
+  AlexaImage convert(Map map) => AlexaImageSerializer.fromMap(map);
 }
 
-class AlexaCardImageSerializer extends Codec<AlexaCardImage, Map> {
-  const AlexaCardImageSerializer();
+class AlexaImageSerializer extends Codec<AlexaImage, Map> {
+  const AlexaImageSerializer();
 
   @override
-  get encoder => const AlexaCardImageEncoder();
+  get encoder => const AlexaImageEncoder();
   @override
-  get decoder => const AlexaCardImageDecoder();
-  static AlexaCardImage fromMap(Map map) {
-    return AlexaCardImage(
+  get decoder => const AlexaImageDecoder();
+  static AlexaImage fromMap(Map map) {
+    return AlexaImage(
         smallImageUrl: map['smallImageUrl'] as String,
         largeImageUrl: map['largeImageUrl'] as String);
   }
 
-  static Map<String, dynamic> toMap(_AlexaCardImage model) {
+  static Map<String, dynamic> toMap(_AlexaImage model) {
     if (model == null) {
       return null;
     }
@@ -3189,7 +3188,7 @@ class AlexaCardImageSerializer extends Codec<AlexaCardImage, Map> {
   }
 }
 
-abstract class AlexaCardImageFields {
+abstract class AlexaImageFields {
   static const List<String> allFields = <String>[smallImageUrl, largeImageUrl];
 
   static const String smallImageUrl = 'smallImageUrl';

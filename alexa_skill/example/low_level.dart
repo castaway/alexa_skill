@@ -10,7 +10,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:alexa_skill/alexa_skill.dart';
 
-// TODO: High level
 main() async {
   var server = await HttpServer.bind('127.0.0.1', 3000);
   print('Listening at http://127.0.0.1:3000');

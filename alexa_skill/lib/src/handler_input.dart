@@ -1,5 +1,9 @@
 import 'models.dart';
+import 'response_builder.dart';
 
-class HandlerInput {
+class AlexaHandlerInput {
   final AlexaRequestEnvelope requestEnvelope;
+  final AlexaResponseBuilder responseBuilder = AlexaResponseBuilder();
+
+  AlexaHandlerInput(this.requestEnvelope);
 }

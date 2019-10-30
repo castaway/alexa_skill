@@ -540,11 +540,11 @@ class _AlexaCard {
   /// [AlexaCardType.standard] card. Only applicable for [AlexaCardType.standard] cards.
   ///
   /// You can provide two URLs, for use on different sized screens.
-  _AlexaCardImage image;
+  _AlexaImage image;
 }
 
 @_alexaSerializable
-class _AlexaCardImage {
+class _AlexaImage {
   /// Displayed on smaller screens.
   ///
   /// Recommended size: `720w x 480h`
