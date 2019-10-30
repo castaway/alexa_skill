@@ -19,7 +19,10 @@ class HelloWorldHandler extends AlexaLaunchRequestHandler {
   @override
   AlexaResponseEnvelope handleTyped(
       AlexaHandlerInput handlerInput, AlexaLaunchRequest request) {
-    return handlerInput.responseBuilder.withSpeech('Hello, world!').response;
+    return handlerInput.responseBuilder
+        .withSpeech('Hello, world!')
+        .withShouldEndSession(true)
+        .response;
   }
 }
 
