@@ -4,15 +4,20 @@ import 'models.dart';
 import 'request_handler.dart';
 
 // TODO: Persistence, etc.
-class AlexaSkill {
-  final List<AlexaRequestHandler> requestHandlers = [];
-  final List<AlexaRequestInterceptor> requestInterceptors = [];
-  final List<AlexaResponseInterceptor> responseInterceptors = [];
-  final List<AlexaExceptionHandler> exceptionHandlers = [];
+class AlexaSkill<T> {
+  final List<AlexaRequestHandler<T>> requestHandlers = [];
+  final List<AlexaRequestInterceptor<T>> requestInterceptors = [];
+  final List<AlexaResponseInterceptor<T>> responseInterceptors = [];
+  final List<AlexaExceptionHandler<T>> exceptionHandlers = [];
 
   Future<AlexaResponseEnvelope> handleRequest(
-      AlexaRequestEnvelope requestEnvelope) async {
-    var handlerInput = AlexaHandlerInput(requestEnvelope);
+      AlexaRequestEnvelope requestEnvelope) {
+    var handlerInput = AlexaHandlerInput<T>(requestEnvelope);
+    return handleInput(handlerInput);
+  }
+
+  Future<AlexaResponseEnvelope> handleInput(
+      AlexaHandlerInput<T> handlerInput) async {
     try {
       for (var i in requestInterceptors) {
         await i.process(handlerInput);

@@ -3,52 +3,58 @@ import 'constants.dart';
 import 'handler_input.dart';
 import 'models.dart';
 
-abstract class AlexaRequestHandler {
-  FutureOr<bool> canHandle(AlexaHandlerInput handlerInput);
-
-  FutureOr<AlexaResponseEnvelope> handle(AlexaHandlerInput handlerInput);
-}
-
-abstract class AlexaRequestInterceptor {
-  FutureOr<void> process(AlexaHandlerInput handlerInput);
-}
-
-abstract class AlexaExceptionHandler {
-  FutureOr<bool> canHandle(
-      AlexaHandlerInput handlerInput, Object error, StackTrace stackTrace);
+abstract class AlexaRequestHandler<Context> {
+  FutureOr<bool> canHandle(AlexaHandlerInput<Context> handlerInput);
 
   FutureOr<AlexaResponseEnvelope> handle(
-      AlexaHandlerInput handlerInput, Object error, StackTrace stackTrace);
+      AlexaHandlerInput<Context> handlerInput);
 }
 
-abstract class AlexaResponseInterceptor {
+abstract class AlexaRequestInterceptor<Context> {
+  FutureOr<void> process(AlexaHandlerInput<Context> handlerInput);
+}
+
+abstract class AlexaExceptionHandler<Context> {
+  FutureOr<bool> canHandle(AlexaHandlerInput<Context> handlerInput,
+      Object error, StackTrace stackTrace);
+
+  FutureOr<AlexaResponseEnvelope> handle(
+      AlexaHandlerInput<Context> handlerInput,
+      Object error,
+      StackTrace stackTrace);
+}
+
+abstract class AlexaResponseInterceptor<Context> {
   FutureOr<void> process(
-      AlexaHandlerInput handlerInput, AlexaResponseEnvelope output);
+      AlexaHandlerInput<Context> handlerInput, AlexaResponseEnvelope output);
 }
 
-abstract class AlexaTypedRequestHandler<T> extends AlexaRequestHandler {
+abstract class AlexaTypedRequestHandler<T, Context>
+    extends AlexaRequestHandler<Context> {
   Iterable<String> get acceptedRequestTypes;
 
-  FutureOr<T> getTyped(AlexaHandlerInput handlerInput);
+  FutureOr<T> getTyped(AlexaHandlerInput<Context> handlerInput);
 
-  FutureOr<bool> canHandleTyped(AlexaHandlerInput handlerInput, T request);
+  FutureOr<bool> canHandleTyped(
+      AlexaHandlerInput<Context> handlerInput, T request);
 
   FutureOr<AlexaResponseEnvelope> handleTyped(
-      AlexaHandlerInput handlerInput, T request);
+      AlexaHandlerInput<Context> handlerInput, T request);
 
   @override
-  Future<bool> canHandle(AlexaHandlerInput handlerInput) async {
+  Future<bool> canHandle(AlexaHandlerInput<Context> handlerInput) async {
     return await canHandleTyped(handlerInput, await getTyped(handlerInput));
   }
 
   @override
-  Future<AlexaResponseEnvelope> handle(AlexaHandlerInput handlerInput) async {
+  Future<AlexaResponseEnvelope> handle(
+      AlexaHandlerInput<Context> handlerInput) async {
     return await handleTyped(handlerInput, await getTyped(handlerInput));
   }
 }
 
-abstract class AlexaLaunchRequestHandler
-    extends AlexaTypedRequestHandler<AlexaLaunchRequest> {
+abstract class AlexaLaunchRequestHandler<Context>
+    extends AlexaTypedRequestHandler<AlexaLaunchRequest, Context> {
   @override
   Iterable<String> get acceptedRequestTypes => [AlexaRequestType.launchRequest];
 
@@ -57,8 +63,8 @@ abstract class AlexaLaunchRequestHandler
       handlerInput.requestEnvelope.launchRequest;
 }
 
-abstract class AlexaSessionEndedRequestHandler
-    extends AlexaTypedRequestHandler<AlexaSessionEndedRequest> {
+abstract class AlexaSessionEndedRequestHandler<Context>
+    extends AlexaTypedRequestHandler<AlexaSessionEndedRequest, Context> {
   @override
   Iterable<String> get acceptedRequestTypes =>
       [AlexaRequestType.sessionEndedRequest];
@@ -68,8 +74,8 @@ abstract class AlexaSessionEndedRequestHandler
       handlerInput.requestEnvelope.sessionEndedRequest;
 }
 
-abstract class AlexaIntentRequestHandler
-    extends AlexaTypedRequestHandler<AlexaIntentRequest> {
+abstract class AlexaIntentRequestHandler<Context>
+    extends AlexaTypedRequestHandler<AlexaIntentRequest, Context> {
   @override
   Iterable<String> get acceptedRequestTypes => [AlexaRequestType.intentRequest];
 
@@ -78,8 +84,8 @@ abstract class AlexaIntentRequestHandler
       handlerInput.requestEnvelope.intentRequest;
 }
 
-abstract class AlexaCanFulfillIntentRequestHandler
-    extends AlexaTypedRequestHandler<AlexaCanFulfillIntentRequest> {
+abstract class AlexaCanFulfillIntentRequestHandler<Context>
+    extends AlexaTypedRequestHandler<AlexaCanFulfillIntentRequest, Context> {
   @override
   Iterable<String> get acceptedRequestTypes =>
       [AlexaRequestType.canFulfillIntentRequest];
