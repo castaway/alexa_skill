@@ -30,6 +30,7 @@ class AlexaSkill<T> {
   Future<AlexaResponseEnvelope> handleInput(
       AlexaHandlerInput<T> handlerInput) async {
     try {
+      // TODO: Verify signatures here
       for (var i in requestInterceptors) {
         await i.process(handlerInput);
       }
