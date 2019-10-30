@@ -10,8 +10,27 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:alexa_skill/alexa_skill.dart';
 
+class HelloWorldHandler extends AlexaLaunchRequestHandler {
+  @override
+  bool canHandleTyped(
+          AlexaHandlerInput handlerInput, AlexaLaunchRequest request) =>
+      true;
+
+  @override
+  AlexaResponseEnvelope handleTyped(
+      AlexaHandlerInput handlerInput, AlexaLaunchRequest request) {
+    return handlerInput.responseBuilder.withSpeech('Hello, world!').response;
+  }
+}
+
 // TODO: High level
 main() async {
+  var skill = AlexaSkill(
+    requestHandlers: [
+      HelloWorldHandler(),
+    ],
+  );
+
   var server = await HttpServer.bind('127.0.0.1', 3000);
   print('Listening at http://127.0.0.1:3000');
   await for (var request in server) {
@@ -26,31 +45,7 @@ main() async {
             .join()
             .then(json.decode) as Map;
         var requestEnvelope = alexaRequestEnvelopeSerializer.decode(bodyResult);
-        var responseEnvelope = AlexaResponseEnvelope();
-        print('Request type: ${requestEnvelope.requestType}');
-
-        if (requestEnvelope.requestType == AlexaRequestType.launchRequest) {
-          // Send a basic text response.
-          responseEnvelope.response = AlexaResponse(
-            shouldEndSession: true,
-            outputSpeech: AlexaOutputSpeech(
-              type: AlexaOutputSpeechType.plainText,
-              text: 'Hello, world!',
-            ),
-          );
-        } else if (requestEnvelope.requestType !=
-            AlexaRequestType.sessionEndedRequest) {
-          // In case of supported actions, send a message.
-          print(JsonEncoder.withIndent('  ').convert(requestEnvelope.request));
-          responseEnvelope.response = AlexaResponse(
-            outputSpeech: AlexaOutputSpeech(
-              type: AlexaOutputSpeechType.plainText,
-              text: 'Only launch requests are supported in this example, '
-                  'but Alexa sent a ${requestEnvelope.requestType}',
-            ),
-          );
-        }
-
+        var responseEnvelope = await skill.handleRequest(requestEnvelope);
         // Send the response, and also pretty print it to the terminal.
         if (responseEnvelope != null) {
           print(JsonEncoder.withIndent('  ').convert(responseEnvelope));

@@ -7,13 +7,13 @@ class AlexaResponseBuilder {
 
   AlexaResponseEnvelope build() => response;
 
-  AlexaResponseBuilder speak(String text) {
+  AlexaResponseBuilder withSpeech(String text) {
     return this
       ..response.response.outputSpeech =
           AlexaOutputSpeech(type: AlexaOutputSpeechType.plainText, text: text);
   }
 
-  AlexaResponseBuilder reprompt(String text) {
+  AlexaResponseBuilder withPeprompt(String text) {
     return this
       ..response.response.reprompt = AlexaReprompt(
           outputSpeech: AlexaOutputSpeech(
