@@ -2,7 +2,7 @@ name: alexa_skill
 description: Unofficial Dart library for building Alexa skills as Web services.
 homepage: https://github.com/thosakwe/alexa_skill
 author: Tobe O <thosakwe@gmail.com>
-version: 0.0.1
+version: 0.0.2
 environment:
   sdk: ">=2.0.0 <3.0.0"
 dependencies:

@@ -1,3 +1,4 @@
+export 'src/attributes.dart';
 export 'src/constants.dart';
 export 'src/handler_input.dart';
 export 'src/models.dart';

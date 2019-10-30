@@ -43,6 +43,10 @@ abstract class AlexaTypedRequestHandler<T, Context>
 
   @override
   Future<bool> canHandle(AlexaHandlerInput<Context> handlerInput) async {
+    if (!acceptedRequestTypes
+        .contains(handlerInput.requestEnvelope.requestType)) {
+      return false;
+    }
     return await canHandleTyped(handlerInput, await getTyped(handlerInput));
   }
 
