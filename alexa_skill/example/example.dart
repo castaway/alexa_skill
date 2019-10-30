@@ -6,9 +6,9 @@
 /// but once that's done, it should just work.
 library alexa_skill.example;
 
-import 'dart:convert';
-import 'dart:io';
 import 'package:alexa_skill/alexa_skill.dart';
+import 'package:alexa_skill/shelf.dart';
+import 'package:shelf/shelf_io.dart' as shelf_io;
 
 class HelloWorldHandler extends AlexaLaunchRequestHandler {
   @override
@@ -25,24 +25,6 @@ class HelloWorldHandler extends AlexaLaunchRequestHandler {
 
 main() async {
   var skill = AlexaSkill()..requestHandlers.add(HelloWorldHandler());
-  var server = await HttpServer.bind('127.0.0.1', 3000);
+  await shelf_io.serve(alexaSkillHandler(skill), '127.0.0.1', 3000);
   print('Listening at http://127.0.0.1:3000');
-
-  await for (var request in server) {
-    if (request.method != 'POST' || request.uri.path != '/') {
-      request.response.statusCode = 404;
-    } else {
-      // Parse the request body.
-      var bodyResult = await request
-          .cast<List<int>>()
-          .transform(utf8.decoder)
-          .join()
-          .then(json.decode) as Map;
-      var requestEnvelope = alexaRequestEnvelopeSerializer.decode(bodyResult);
-      var responseEnvelope = await skill.handleRequest(requestEnvelope);
-      request.response
-        ..headers.contentType = ContentType.json
-        ..write(json.encode(responseEnvelope));
-    }
-  }
 }

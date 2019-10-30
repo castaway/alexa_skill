@@ -12,6 +12,7 @@ dependencies:
   crypto: ^2.0.0
   http: ">=0.11.0 <0.13.0"
   path: ^1.0.0
+  shelf: ^0.7.5
   string_scanner: ^1.0.0
   x509csr: ^1.0.0
 dev_dependencies:
