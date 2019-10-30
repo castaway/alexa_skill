@@ -18,23 +18,23 @@ Below is a contrived example:
 
 ```dart
 var bodyAsMap = await parseRequestJson();
-var requestBody = alexaRequestBodySerializer.decode(bodyResult);
-var responseBody = AlexaResponseBody();
+var requestEnvelope = alexaRequestEnvelopeSerializer.decode(bodyAsMap);
+var responseEnvelope = AlexaResponseEnvelope();
 
-if (requestBody.requestType == AlexaRequestType.launchRequest) {
+if (requestEnvelope.requestType == AlexaRequestType.launchRequest) {
   // Send a basic text response.
-  responseBody.response = AlexaResponse(
+  responseEnvelope.response = AlexaResponse(
     outputSpeech: AlexaOutputSpeech(
       type: AlexaOutputSpeechType.plainText,
       text: 'Hello, world!',
     ),
   );
-} else if (requestBody.requestType !=
+} else if (requestEnvelope.requestType !=
     AlexaRequestType.sessionEndedRequest) {
   // Do something...
 }
 
 request.response
   ..headers.contentType = ContentType.json
-  ..write(json.encode(responseBody));
+  ..write(json.encode(responseEnvelope));
 ```

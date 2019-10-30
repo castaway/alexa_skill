@@ -24,38 +24,38 @@ main() async {
             .transform(utf8.decoder)
             .join()
             .then(json.decode) as Map;
-        var requestBody = alexaRequestBodySerializer.decode(bodyResult);
-        var responseBody = AlexaResponseBody();
-        print('Request type: ${requestBody.requestType}');
+        var requestEnvelope = alexaRequestEnvelopeSerializer.decode(bodyResult);
+        var responseEnvelope = AlexaResponseEnvelope();
+        print('Request type: ${requestEnvelope.requestType}');
 
-        if (requestBody.requestType == AlexaRequestType.launchRequest) {
+        if (requestEnvelope.requestType == AlexaRequestType.launchRequest) {
           // Send a basic text response.
-          responseBody.response = AlexaResponse(
+          responseEnvelope.response = AlexaResponse(
             shouldEndSession: true,
             outputSpeech: AlexaOutputSpeech(
               type: AlexaOutputSpeechType.plainText,
               text: 'Hello, world!',
             ),
           );
-        } else if (requestBody.requestType !=
+        } else if (requestEnvelope.requestType !=
             AlexaRequestType.sessionEndedRequest) {
           // In case of supported actions, send a message.
-          print(JsonEncoder.withIndent('  ').convert(requestBody.request));
-          responseBody.response = AlexaResponse(
+          print(JsonEncoder.withIndent('  ').convert(requestEnvelope.request));
+          responseEnvelope.response = AlexaResponse(
             outputSpeech: AlexaOutputSpeech(
               type: AlexaOutputSpeechType.plainText,
               text: 'Only launch requests are supported in this example, '
-                  'but Alexa sent a ${requestBody.requestType}',
+                  'but Alexa sent a ${requestEnvelope.requestType}',
             ),
           );
         }
 
         // Send the response, and also pretty print it to the terminal.
-        if (responseBody != null) {
-          print(JsonEncoder.withIndent('  ').convert(responseBody));
+        if (responseEnvelope != null) {
+          print(JsonEncoder.withIndent('  ').convert(responseEnvelope));
           request.response
             ..headers.contentType = ContentType.json
-            ..write(json.encode(responseBody));
+            ..write(json.encode(responseEnvelope));
         }
       }
     } catch (e, st) {

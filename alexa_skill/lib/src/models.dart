@@ -5,7 +5,7 @@ part 'models.g.dart';
 const Serializable _alexaSerializable = Serializable(autoSnakeCaseNames: false);
 
 @_alexaSerializable
-class _AlexaRequestBody {
+class _AlexaRequestEnvelope {
   /// The version specifier for the request.
   @DefaultsTo('1.0')
   String version;
@@ -261,7 +261,7 @@ class _AlexaSession {
   /// The value is an object that represents the value of the attribute.
   ///
   /// When returning your response, you can include data you need to persist during
-  /// the session in the [AlexaResponseBody.sessionAttributes] property. The attributes you provide are
+  /// the session in the [AlexaResponseEnvelope.sessionAttributes] property. The attributes you provide are
   /// then passed back to your skill on the next request.
   Map<String, dynamic> attributes;
 
@@ -435,7 +435,7 @@ abstract class AlexaRequest {
 // Responses...
 
 @_alexaSerializable
-class _AlexaResponseBody {
+class _AlexaResponseEnvelope {
   /// The version specifier for the response.
   @DefaultsTo('1.0')
   String version;
