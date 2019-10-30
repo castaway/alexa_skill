@@ -9,6 +9,23 @@ abstract class AlexaRequestHandler {
   FutureOr<AlexaResponseEnvelope> handle(AlexaHandlerInput handlerInput);
 }
 
+abstract class AlexaRequestInterceptor {
+  FutureOr<void> process(AlexaHandlerInput handlerInput);
+}
+
+abstract class AlexaExceptionHandler {
+  FutureOr<bool> canHandle(
+      AlexaHandlerInput handlerInput, Object error, StackTrace stackTrace);
+
+  FutureOr<AlexaResponseEnvelope> handle(
+      AlexaHandlerInput handlerInput, Object error, StackTrace stackTrace);
+}
+
+abstract class AlexaResponseInterceptor {
+  FutureOr<void> process(
+      AlexaHandlerInput handlerInput, AlexaResponseEnvelope output);
+}
+
 abstract class AlexaTypedRequestHandler<T> extends AlexaRequestHandler {
   Iterable<String> get acceptedRequestTypes;
 
