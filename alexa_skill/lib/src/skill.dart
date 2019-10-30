@@ -1,18 +1,29 @@
 import 'dart:async';
+import 'attributes.dart';
 import 'handler_input.dart';
 import 'models.dart';
 import 'request_handler.dart';
 
-// TODO: Persistence, etc.
 class AlexaSkill<T> {
+  final PersistenceAdapter persistenceAdapter;
+  final InMemoryPersistenceAdapter sessionAdapter =
+      InMemoryPersistenceAdapter();
   final List<AlexaRequestHandler<T>> requestHandlers = [];
   final List<AlexaRequestInterceptor<T>> requestInterceptors = [];
   final List<AlexaResponseInterceptor<T>> responseInterceptors = [];
   final List<AlexaExceptionHandler<T>> exceptionHandlers = [];
 
+  AlexaSkill({PersistenceAdapter persistenceAdapter})
+      : this.persistenceAdapter =
+            persistenceAdapter ?? InMemoryPersistenceAdapter();
+
   Future<AlexaResponseEnvelope> handleRequest(
-      AlexaRequestEnvelope requestEnvelope) {
-    var handlerInput = AlexaHandlerInput<T>(requestEnvelope);
+      AlexaRequestEnvelope requestEnvelope,
+      {T context}) async {
+    var attributesManager =
+        AttributesManager(persistenceAdapter, sessionAdapter, requestEnvelope);
+    var handlerInput = AlexaHandlerInput<T>(requestEnvelope, attributesManager,
+        context: context);
     return handleInput(handlerInput);
   }
 
