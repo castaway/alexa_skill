@@ -99,3 +99,11 @@ abstract class AlexaConfirmationStatus {
   /// before it can determine whether it can fulfill the intent for each slot value.
   static const String maybe = 'MAYBE';
 }
+
+abstract class AlexaSessionEndedReason {
+  static const String userInitiated = 'USER_INITIATED';
+
+  static const String error = 'ERROR';
+
+  static const String exceededMaximumReprompts = 'EXCEEDED_MAXIMUM_REPROMPTS';
+}
